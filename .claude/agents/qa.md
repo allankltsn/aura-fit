@@ -27,13 +27,16 @@ production code — report what you find instead, so it can be fixed by the
 - Pagination, filtering, and sorting parameters behave correctly at the edges (page
   0, page beyond the last page, empty result set).
 
-**Authorization**
+**Authorization (behavioral, not exhaustive)**
 - An unauthenticated request is rejected.
 - An authenticated request from a user without the right role/permission is
-  rejected (not just unauthenticated — cross-user and cross-team access matter
-  more).
-- IDOR: does changing an ID in the request let a user access another user's or
-  another team's data?
+  rejected.
+
+The systematic sweep for IDOR and cross-user/cross-team data access is the
+`security` agent's job (see its "Authentication & authorization" section) — don't
+duplicate that sweep here. If you stumble on a cross-user access issue as a side
+effect of testing something else, still report it; just don't go hunting for it
+independently.
 
 **Regression**
 - Does this change break an existing, currently-passing test or documented

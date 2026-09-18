@@ -136,6 +136,13 @@ pontual, sem passar pelo fluxo completo do Superpowers:
 ## Fora de escopo (fases futuras)
 
 - Hooks bloqueantes (ex.: impedir commit sem spec aprovada).
+  - **Pendência concreta para a Fase 2:** a tabela de delegação em `CLAUDE.md` é
+    apenas uma sugestão — nada impede o thread principal de implementar/revisar
+    direto em vez de invocar `architect`/`backend`/`python`/`aws`/`qa`/`security`.
+    Um hook (ex.: `PreToolUse` em `Edit`/`Write` fora de um subagente, ou
+    `Stop`/`SubagentStop` checando se `qa`/`security` rodaram antes de encerrar)
+    é o mecanismo natural para tornar a delegação obrigatória em vez de opcional.
+    Revisitar quando a Fase 2 for desenhada.
 - Integrações MCP (GitHub, AWS, PostgreSQL, Sentry).
 - Agentes de documentação, SRE, Terraform dedicado, reviewer dedicado.
 - CI/CD validando conformidade.
@@ -149,3 +156,11 @@ Como o entregável é configuração (não código de aplicação), a validaçã
 3. Confirmar que os 6 subagentes aparecem como agentes disponíveis.
 4. Testar cada comando (`/qa`, `/security`, `/aws`) e confirmar que aciona o
    subagente correspondente.
+
+**Herança de `CLAUDE.md` pelos subagentes (confirmado):** segundo a documentação
+oficial do Claude Code (`sub-agents.md`, seção "What Loads at Startup for
+Subagents"), todo subagente carrega automaticamente a hierarquia de `CLAUDE.md`
+(usuário, projeto, local) a menos que declare `omitClaudeMd: true` no frontmatter.
+Nenhum dos 6 agentes desta Fase 1 declara esse campo, então as regras de segurança
+e a lista de ações que exigem aprovação humana (seções 4–5 de `CLAUDE.md`) chegam a
+todos eles por padrão — não é necessário duplicá-las nos arquivos de agente.

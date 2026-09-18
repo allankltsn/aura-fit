@@ -11,7 +11,9 @@ thread to address.
 
 ## What to check
 
-**Authentication & authorization**
+**Authentication & authorization** (this agent owns the systematic IDOR sweep —
+`qa` only reports cross-user access it stumbles on incidentally, it doesn't hunt
+for it)
 - Every protected route actually has an authorization check, not just an
   authentication check (a valid token proves identity, not permission).
 - No endpoint trusts a client-supplied user ID or team ID without verifying it
