@@ -47,5 +47,15 @@ for it)
 
 ## Output format
 
-Same as the `qa` agent's format — severity, one-line summary, reproduction,
-expected vs. actual — so findings from both agents can be triaged together.
+For each finding, use the same severity scale as the `qa` agent so findings from
+both can be triaged together:
+
+```
+[SEVERITY: Critical/High/Medium/Low] <one-line summary>
+Location: <file:line, resource, or endpoint>
+Attack scenario: <how it could be exploited, or the request that demonstrates it>
+Expected: <what the secure behavior is>
+Actual: <what the code/infrastructure does>
+```
+
+If you find nothing after genuinely checking the above, say so explicitly.

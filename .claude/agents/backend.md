@@ -40,5 +40,6 @@ change is backward compatible with rows already in the database.
 
 **Authentication/authorization:** protected routes use the project's existing
 `AuthGuard` and Cognito integration — do not implement a parallel JWT verification
-path. Authorization must be explicit on every route; don't leave a route
+path. If the project has no such guard yet, don't create one: return to the caller
+without implementing and state the question. Authorization must be explicit on every route; don't leave a route
 unauthenticated because "it's just a GET."
