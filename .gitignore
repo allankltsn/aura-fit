@@ -1,3 +1,6 @@
 .claude/settings.local.json
 .claude/worktrees/
 .superpowers/
+
+# credenciais locais (Google OAuth etc.) — nunca versionar
+secrets/
