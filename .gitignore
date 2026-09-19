@@ -4,3 +4,9 @@
 
 # credenciais locais (Google OAuth etc.) — nunca versionar
 secrets/
+
+.env
+node_modules
+dist
+.turbo
+coverage
