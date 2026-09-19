@@ -62,7 +62,14 @@ Criar o branch `feat/rbac-auth` (o working tree tem mudanças suas pendentes que
 
 ## Daily log
 
-_(preenchido durante a sprint: Progresso · Hoje · Dificuldades · Pendências)_
+### Daily 1 — após a Task 0
+
+- **Progresso:** Task 0 concluída (`88237ae` + correção `b3a68c1`). `scripts/check-compose.sh` passa em volume novo: Postgres com `aura_identity` e `aura_keycloak`, Redis respondendo, `workspace` com Node 22 e pnpm 9. A revisão aprovou a conformidade e achou 1 problema real, já corrigido: o healthcheck do Postgres podia dar "saudável" antes de o `init.sql` criar os bancos.
+- **Hoje:** Task 1 (`@aura/authz`, catálogo de permissões) e, em seguida, Task 2 (Prisma e seed).
+- **Dificuldades:** nenhuma bloqueante. A varredura prévia do plano encontrou 11 defeitos, todos resolvidos como *rulings* (ledger): `curl`/`jq` na imagem, `@aura/config` como dependência dos pacotes, build das dependências antes dos testes, `EmailNotVerifiedError` na porta, entre outros.
+- **Pendências:** a Task 4 precisa exercitar o healthcheck e o realm do Keycloak (a Task 0 não os iniciou). Cinco itens menores ficaram registrados para a revisão final (robustez do script de check, `.gitattributes`, healthcheck do Redis).
+
+_(próximos dailies entram abaixo)_
 
 ## Review
 
