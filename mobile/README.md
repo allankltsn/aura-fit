@@ -33,6 +33,10 @@ app/                     Expo Router routes (file-based)
   (app)/(tabs)/            Início, Treinos, Progresso, Chat — bottom tab app
   (app)/workout/[id]       workout detail
   (app)/exercise/[id]      set-by-set exercise execution
+  (dashboard)/             trainer dashboard: home, students (list/detail/
+                           form), finance, exercises, permissions, profile
+                           — responsive shell in (dashboard)/_layout.tsx
+  (legal)/                 terms, privacy — section-nav doc layout
   +not-found, maintenance, access-denied, session-expired
 
 src/
@@ -43,9 +47,10 @@ src/
                             ported 1:1 from its SVG symbol defs
   components/brand/        Logo (live text, not an image), LogoMark (app-icon
                             tile), AuthBackground (dark gradient hero)
-  components/ui/           Button, Input, Checkbox/Radio/Switch, Chip,
-                            StatusBadge, Avatar, Card (+ KPICard, ExerciseRow,
-                            PlanCard), Segmented, Tabs, ProgressBar/Ring,
+  components/ui/           Button, Input, AuthField, Checkbox/Radio/Switch,
+                            Chip, StatusBadge, Avatar, Card (+ KPICard,
+                            ExerciseRow, ExerciseLibraryCard, PlanCard),
+                            DataTable, Segmented, Tabs, ProgressBar/Ring,
                             LineChart, Stepper, Alert, Toast, ConfirmModal,
                             EmptyState, Skeleton
   components/navigation/   AppHeader, TopBar, Sidebar (web/tablet dashboard
@@ -58,6 +63,11 @@ src/
   lib/secureStorage.ts     token storage (SecureStore on native, in-memory
                             on web — see "Security" below)
   lib/openExternalUrl.ts   scheme-checked wrapper around Linking.openURL
+  lib/dashboardNav.ts      single source of truth for the dashboard's nav
+                            items + active-route matching
+  lib/legalDocs.ts         nav entries for the (legal) doc section
+  lib/useResponsive.ts     the one breakpoint the dashboard/legal shells
+                            switch layout at
 
 assets/brand/             SVG sources for the wordmark, the app-icon mark,
                            and the 1024×1024 masters app.json's icon/splash/
@@ -87,11 +97,13 @@ This is a client app that will eventually talk to the NestJS/Cognito
 backend described in the repo's root `CLAUDE.md` — the same document's
 "never log tokens" rule and least-privilege stance apply here too. Concretely:
 
-- **CSP.** `app/+html.tsx` sets a restrictive Content-Security-Policy meta
-  tag on the web build (`script-src 'self'`, no `unsafe-eval`); `vercel.json`
-  and `public/_headers` carry the stronger header-based version (adds
-  `frame-ancestors 'none'`, HSTS, `X-Frame-Options`) for hosts that read
-  them. `style-src` allows `'unsafe-inline'` deliberately — that's how
+- **CSP.** `public/index.html` (Expo's web export uses this as the HTML
+  shell template when it exists, instead of its own default — see the
+  comment at the top of the file) sets a restrictive Content-Security-Policy
+  meta tag on the web build (`script-src 'self'`, no `unsafe-eval`);
+  `vercel.json` and `public/_headers` carry the stronger header-based
+  version (adds `frame-ancestors 'none'`, HSTS, `X-Frame-Options`) for hosts
+  that read them. `style-src` allows `'unsafe-inline'` deliberately — that's how
   React Native Web applies styles — everything else stays locked down.
 - **No `dangerouslySetInnerHTML` / raw HTML.** `eslint.config.js` enforces
   `react/no-danger` and `react/jsx-no-target-blank`, and blocks

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="%LANG_ISO_CODE%">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+
+    <!--
+      Content-Security-Policy for the web build, delivered as a <meta> tag
+      since a static Expo export has no server to set response headers
+      from. See public/_headers and vercel.json for the stronger,
+      header-based version (adds frame-ancestors, which <meta> can't carry)
+      that hosts reading those files apply automatically.
+
+      - script-src has no 'unsafe-inline'/'unsafe-eval': the bundle ships as
+        an external <script src>, so injected-<script> and inline-handler
+        XSS payloads simply don't execute.
+      - style-src needs 'unsafe-inline': React Native Web styles elements
+        via the DOM `style` attribute — that's how View/Text style props
+        work — and this page's own reset styles ship as an inline <style>
+        block below. A deliberate, scoped trade-off: style injection can't
+        run script.
+      - connect-src / img-src: 'self' only for now. Add your API origin(s)
+        to connect-src here once the backend is wired up.
+    -->
+    <meta
+      httpEquiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- theme-color and description meta tags come from app.json's web.themeColor/web.description. -->
+    <title>%WEB_TITLE%</title>
+
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

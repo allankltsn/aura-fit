@@ -64,6 +64,74 @@ export const plans = [
   },
 ];
 
+export const dashboardKpis = {
+  totalStudents: 48,
+  monthlyRevenue: 'R$ 8.450',
+  activeSubscriptions: 42,
+  averageRating: '4,9',
+};
+
+export const revenueByMonth = {
+  months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+  values: [3200, 3900, 4700, 6300, 7600, 8450],
+};
+
+export const transactions = [
+  {
+    id: '1',
+    label: 'Assinatura Mensal',
+    student: 'Lucas Ferreira',
+    initials: 'LF',
+    amount: 'R$ 197,00',
+    date: '02/06/2025',
+    tone: 0 as const,
+  },
+  {
+    id: '2',
+    label: 'Assinatura Trimestral',
+    student: 'Gabriela Santos',
+    initials: 'GS',
+    amount: 'R$ 547,00',
+    date: '01/06/2025',
+    tone: 1 as const,
+  },
+  {
+    id: '3',
+    label: 'Plano Anual',
+    student: 'Bruno Oliveira',
+    initials: 'BO',
+    amount: 'R$ 1.897,00',
+    date: '31/05/2025',
+    tone: 2 as const,
+  },
+  {
+    id: '4',
+    label: 'Assinatura Mensal',
+    student: 'Juliana Costa',
+    initials: 'JC',
+    amount: 'R$ 197,00',
+    date: '30/05/2025',
+    tone: 3 as const,
+  },
+];
+
+export const financeSummary = { monthRevenue: 'R$ 8.450', activeSubscriptions: 42, averageTicket: 'R$ 201' };
+
+export const exerciseLibrary = [
+  { id: '1', name: 'Supino Reto', muscle: 'Peito', level: 'Intermediário' },
+  { id: '2', name: 'Agachamento Livre', muscle: 'Pernas', level: 'Intermediário' },
+  { id: '3', name: 'Remada Curvada', muscle: 'Costas', level: 'Intermediário' },
+  { id: '4', name: 'Desenvolvimento', muscle: 'Ombros', level: 'Intermediário' },
+  { id: '5', name: 'Rosca Direta', muscle: 'Bíceps', level: 'Iniciante' },
+  { id: '6', name: 'Tríceps na Polia', muscle: 'Tríceps', level: 'Iniciante' },
+];
+
+export const permissionRoles = [
+  { id: '1', name: 'Personal Trainer', description: 'Acesso completo aos recursos do tenant', status: 'ok' as const },
+  { id: '2', name: 'Aluno', description: 'Acesso limitado aos próprios dados', status: 'ok' as const },
+  { id: '3', name: 'Administrador', description: 'Acesso total à plataforma', status: 'ok' as const },
+];
+
 export const students = [
   {
     id: '1',

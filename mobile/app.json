@@ -25,7 +25,10 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "lang": "pt-BR",
+      "themeColor": "#1f1f1f",
+      "description": "Mais que treinos. Resultados reais. Gerencie alunos, treinos e sua evolução com o aura-fit."
     },
     "plugins": [
       "expo-router",
