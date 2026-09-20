@@ -19,12 +19,17 @@ const FORM = { 'content-type': 'application/x-www-form-urlencoded' };
 export class KeycloakProvider implements IdentityProviderPort {
   constructor(private readonly cfg: KeycloakConfig) {}
 
+  // Timeout em toda chamada ao Keycloak: um provedor lento não pode travar login/refresh.
+  private http(url: string, init: RequestInit = {}): Promise<Response> {
+    return fetch(url, { ...init, signal: AbortSignal.timeout(10_000) });
+  }
+
   private get realmUrl() { return `${this.cfg.baseUrl}/realms/${this.cfg.realm}`; }
   private get adminUrl() { return `${this.cfg.baseUrl}/admin/realms/${this.cfg.realm}`; }
   private get tokenUrl() { return `${this.realmUrl}/protocol/openid-connect/token`; }
 
   private async adminToken(): Promise<string> {
-    const res = await fetch(this.tokenUrl, {
+    const res = await this.http(this.tokenUrl, {
       method: 'POST', headers: FORM,
       body: new URLSearchParams({
         grant_type: 'client_credentials', client_id: this.cfg.clientId, client_secret: this.cfg.clientSecret,
@@ -36,7 +41,7 @@ export class KeycloakProvider implements IdentityProviderPort {
 
   private async admin(path: string, init: RequestInit = {}): Promise<Response> {
     const token = await this.adminToken();
-    return fetch(`${this.adminUrl}${path}`, {
+    return this.http(`${this.adminUrl}${path}`, {
       ...init,
       headers: { ...(init.headers ?? {}), authorization: `Bearer ${token}`, 'content-type': 'application/json' },
     });
@@ -64,7 +69,7 @@ export class KeycloakProvider implements IdentityProviderPort {
   }
 
   async authenticate(email: string, password: string): Promise<TokenSet> {
-    const res = await fetch(this.tokenUrl, {
+    const res = await this.http(this.tokenUrl, {
       method: 'POST', headers: FORM,
       body: new URLSearchParams({
         grant_type: 'password', client_id: this.cfg.clientId, client_secret: this.cfg.clientSecret,
@@ -86,7 +91,7 @@ export class KeycloakProvider implements IdentityProviderPort {
   }
 
   async refresh(refreshToken: string): Promise<TokenSet> {
-    const res = await fetch(this.tokenUrl, {
+    const res = await this.http(this.tokenUrl, {
       method: 'POST', headers: FORM,
       body: new URLSearchParams({
         grant_type: 'refresh_token', client_id: this.cfg.clientId,
@@ -99,7 +104,7 @@ export class KeycloakProvider implements IdentityProviderPort {
   }
 
   async revokeSession(refreshToken: string): Promise<void> {
-    await fetch(`${this.realmUrl}/protocol/openid-connect/logout`, {
+    await this.http(`${this.realmUrl}/protocol/openid-connect/logout`, {
       method: 'POST', headers: FORM,
       body: new URLSearchParams({
         client_id: this.cfg.clientId, client_secret: this.cfg.clientSecret, refresh_token: refreshToken,
@@ -132,7 +137,7 @@ export class KeycloakProvider implements IdentityProviderPort {
   }
 
   async exchangeAuthorizationCode(i: { code: string; redirectUri: string; codeVerifier: string }): Promise<TokenSet> {
-    const res = await fetch(this.tokenUrl, {
+    const res = await this.http(this.tokenUrl, {
       method: 'POST', headers: FORM,
       body: new URLSearchParams({
         grant_type: 'authorization_code', client_id: this.cfg.webClientId,
