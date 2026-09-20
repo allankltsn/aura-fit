@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_IDENTITY")
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum MembershipStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  permissions RolePermission[]
+  memberships Membership[]
+}
+
+model Permission {
+  id    Int              @id @default(autoincrement())
+  code  String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model User {
+  id              String       @id @default(uuid()) @db.Uuid
+  externalId      String       @unique
+  email           String       @unique
+  name            String
+  phone           String?
+  status          UserStatus   @default(PENDING)
+  emailVerified   Boolean      @default(false)
+  termsAcceptedAt DateTime?
+  termsVersion    String?
+  createdAt       DateTime     @default(now())
+  memberships     Membership[]
+}
+
+model Tenant {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String       @unique
+  status      TenantStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+  invites     Invite[]
+}
+
+// tenantId nulo = admin da plataforma. Postgres trata NULLs como distintos no unique,
+// então a unicidade do admin é garantida no código (AccountsService).
+model Membership {
+  id       String           @id @default(uuid()) @db.Uuid
+  userId   String           @db.Uuid
+  tenantId String?          @db.Uuid
+  roleId   Int
+  status   MembershipStatus @default(ACTIVE)
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant   Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role     Role             @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, tenantId, roleId])
+  @@index([userId])
+}
+
+model Invite {
+  id                    String    @id @default(uuid()) @db.Uuid
+  codeHash              String    @unique
+  tenantId              String    @db.Uuid
+  createdByMembershipId String    @db.Uuid
+  expiresAt             DateTime
+  usedAt                DateTime?
+  usedByUserId          String?   @db.Uuid
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  actorUserId String?  @db.Uuid
+  action      String
+  targetType  String?
+  targetId    String?
+  metadata    Json?
+  ip          String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorUserId])
+}
