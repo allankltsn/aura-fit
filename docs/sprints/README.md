@@ -11,6 +11,10 @@ Spec: [`../superpowers/specs/2026-09-19-rbac-auth-design.md`](../superpowers/spe
 | Claude (orquestrador) | Facilita a cadência, faz o planning, os dailies e monta a review |
 | Subagentes | Um por task do plano (contexto limpo), com revisão em duas etapas: conformidade com o plano/spec e qualidade de código |
 
+## Visibilidade (ClickUp)
+
+O andamento é acompanhado no **ClickUp** (kanban, um card por agente, alertas e decisões). Regras obrigatórias para todos os agentes em [`clickup-workflow.md`](clickup-workflow.md).
+
 ## Cerimônias
 
 1. **Sprint Planning** (início): apresento objetivo, tasks, critérios de aceite, roteiro de demo, riscos e o que **não** entra. **Nada começa sem o seu OK.**
