@@ -113,6 +113,56 @@ Resultado: ✅ ok | ⚠️ com ressalva | ❌ falhou (e o que muda no próximo c
 - O card do agente (filho) recebe no fim um **resumo** de 5 linhas: checkpoints, principais escolhas, desvios, evidências, commit.
 - Vale para **todos** os papéis: orquestrador, implementador, revisor, corretor, investigador. Revisor: um checkpoint por eixo (conformidade com a spec, qualidade), com os achados e a severidade em `Evidência`.
 
+## Evidência de pronto (obrigatória antes de marcar como pronto)
+
+Nenhum agente move um card (nem checkpoint final) para `concluído`, `code review`, `qa testing` ou `aguardando aceite` sem antes **anexar um arquivo de evidência** com dados **válidos e verdadeiros** que justifiquem por que considera a tarefa pronta.
+
+**Regras de veracidade (valem para todos):**
+1. **Gerada, nunca escrita de memória.** O conteúdo vem da **execução real** (saída bruta de comando, relatório de ferramenta, captura). Não parafrasear, não resumir números, não "limpar" falhas.
+2. **Reproduzível:** o arquivo traz o **comando exato**, o **diretório**, o **commit** (`git rev-parse HEAD`), a **data/hora** e o **código de saída**. Outra pessoa consegue repetir.
+3. **Completa, inclusive o negativo:** falhas, avisos e itens **não verificados** aparecem. Se algo não foi testado, o arquivo diz "NÃO VERIFICADO: <o quê e por quê>". Omitir é falsificar.
+4. **Rastreável ao critério de pronto:** cada critério da descrição do card aparece com `✅ atendido (prova: <trecho/linha>)`, `⚠️ parcial` ou `❌ não atendido`. Só o card com todos `✅` (ou ressalvas aprovadas pelo Allan) vai para `concluído`.
+5. **Sem segredos:** nunca incluir tokens, senhas, `.env`, conteúdo de `secrets/`. Mascarar antes de salvar.
+6. Se a evidência **não pôde ser produzida**, o card **não** avança: vai para `bloqueado` ou `aguardando decisão` com o motivo.
+
+**Formato do arquivo, por papel (o que for mais lógico para o nicho):**
+
+| Papel | Arquivo | Conteúdo mínimo |
+|---|---|---|
+| Implementador (código) | `evidence-<card>.md` + `test-output.txt` (saída bruta) | comando(s), saída bruta dos testes (contagem passou/falhou), `git log -1` e `git diff --stat`, checklist dos critérios de pronto |
+| Implementador (infra) | `evidence-<card>.md` + `compose-ps.txt` | `docker compose ps` (saúde), saída do script de verificação, logs relevantes |
+| Implementador (banco) | `evidence-<card>.md` + `migration-check.txt` | migração aplicada, tabelas/colunas conferidas (`\dt`, `select`), seed rodado duas vezes |
+| Revisor | `review-<card>.md` | escopo revisado (commits), achados com severidade (Critical/Important/Minor), arquivo:linha, veredito |
+| QA | `qa-report-<card>.md` + `qa-output.txt` | casos executados, resultado de cada um, defeitos abertos (link dos cards), o que ficou fora |
+| Segurança | `security-<card>.md` | checagens feitas, achados com severidade, o que não foi coberto |
+| Corretor | `fix-<card>.md` + saída do teste | teste que **falhava** (saída antes) e **passa** (saída depois) |
+| Investigador | `findings-<card>.md` | evidências citadas (arquivo:linha, log, transcrito), causa raiz, grau de confiança |
+| Orquestrador | `verification-<card>.md` | conferência independente dos arquivos acima (ver "Verificação") |
+
+Modelo de cabeçalho de todo `evidence-*.md`:
+
+```
+# Evidência — <card> — <checkpoint ou card inteiro>
+Agente: <papel · idcurto>   Data/hora: <ISO 8601>   Commit: <sha>
+Comando(s): <exatos>   Diretório: <cwd>   Código de saída: <n>
+
+## Critérios de pronto
+- [x] <critério 1> — prova: <trecho/linha do output>
+- [ ] <critério 2> — NÃO VERIFICADO: <por quê>
+
+## Saída bruta
+<colar ou apontar para test-output.txt>
+
+## Ressalvas e riscos conhecidos
+<o que não cobre, dívida técnica, achados minor>
+```
+
+**Onde ficam:**
+- **No ClickUp:** anexado ao card do agente (`clickup_attach_task_file`) **e** referenciado no comentário final com o caminho.
+- **No repositório:** `docs/sprints/evidence/sprint-XX/<card>/…` (sem segredos), versionado no mesmo commit ou no seguinte, para virar histórico auditável.
+
+**Verificação (o orquestrador não confia às cegas):** antes de mover o card, o orquestrador **reexecuta ao menos um comando** citado na evidência (por exemplo a suíte de testes) e confere o commit. Divergência = o card volta para `em progresso`, com comentário citando a diferença. O resultado fica em `verification-<card>.md`.
+
 ## Protocolo em tempo real
 
 Quem faz cada ação de ClickUp:
@@ -123,7 +173,7 @@ Quem faz cada ação de ClickUp:
 2. **Subagente, ao começar:** carrega as ferramentas com `ToolSearch` (`select:mcp__claude_ai_ClickUp__clickup_create_comment,mcp__claude_ai_ClickUp__clickup_update_task`) e comenta no seu card `Iniciando: <o que vai fazer>`.
    - A cada marco (RED confirmado, implementação pronta, testes verdes, commit) um comentário curto no card.
    - Se as ferramentas do ClickUp não estiverem disponíveis para ele, **avisa no relatório final** e o orquestrador registra os marcos.
-3. **Subagente, ao terminar:** comentário final (resultado, commit, saída dos testes) e devolve ao orquestrador.
+3. **Subagente, ao terminar:** gera e **anexa o arquivo de evidência** (ver "Evidência de pronto"), comenta o resultado final (resultado, commit, caminho da evidência) e devolve ao orquestrador.
 4. **Orquestrador, depois do retorno:** confere a evidência, move o card ao próximo status do fluxo (`code review`, `qa testing`, `aguardando aceite`, `concluído`) e só então despacha o próximo agente.
 5. **Antes de despachar um revisor:** o orquestrador cria o card do revisor; o do implementador já foi movido antes.
 6. Mudar de status **antes** de mudar a ação (ex.: mover para `em progresso` antes de rodar). Nunca mover retroativamente. Só cards de histórico (Tasks 0–2 desta sprint) foram criados retroativamente, e dizem isso na descrição.
@@ -170,5 +220,6 @@ Quando qualquer agente precisar de uma decisão do Allan:
 - [ ] Meu card existe, com meu papel e escopo?
 - [ ] Ele está `em progresso` **antes** de eu começar?
 - [ ] Comentei os marcos (início, RED, verde, commit)?
+- [ ] Anexei o arquivo de evidência (gerado por execução real, com comando, commit e ressalvas) **antes** de marcar como pronto?
 - [ ] Se preciso de decisão, publiquei o alerta com @Allan e parei?
 - [ ] Meu comentário final tem resultado + evidência?
