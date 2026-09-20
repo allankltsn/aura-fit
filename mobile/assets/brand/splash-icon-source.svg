@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Transparent background; app.json's splash-screen plugin lays this over its own #1f1f1f backgroundColor. -->
+  <text x="512" y="580" text-anchor="middle" font-family="Inter" font-weight="700" font-size="300" letter-spacing="-18" fill="#ffffff">a<tspan fill="#b1111b">-</tspan></text>
+</svg>
