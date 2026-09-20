@@ -17,11 +17,12 @@ Regra de ouro: **o card muda ANTES da ação, nunca depois.** Se o card não diz
 |---|---|---|---|
 | Pai | `milestone` | uma Task do plano (docs/superpowers/plans) | `Task 3 — IdentityProviderPort…` |
 | Filho | Task (padrão, omitir `task_type`) | trabalho de **um agente** nessa Task (implementar, revisar, re-revisar, corrigir) | `[implementador · a1b2c3d4] Implementar Task 3` |
+| Neto | Task (subtarefa do filho) | **um passo** que o agente executa (ler brief, escrever teste, ver RED, implementar X, rodar testes, commit…) | `[implementador · a1b2c3d4] Passo 2 — escrever teste de contrato` |
 
 - Só existem estes tipos na conta: `milestone`, `meeting_note`, `form_response`, `workflow` etc. **Não existem** Feature/Bug. Não tente criar outros.
 - **Título do filho:** `[papel · idcurto] verbo + objeto`. Papéis: `orquestrador`, `implementador`, `revisor`, `corretor`, `investigador`. `idcurto` = 8 primeiros caracteres do id do subagente; o orquestrador não usa id.
 - **Todo agente que atua no projeto tem seu próprio card filho.** Nada de trabalho sem card.
-- Relatório de um card: descrição com **Agente**, **Escopo**, **Arquivos que pode tocar**, **Critério de pronto**. Ao concluir, um comentário com resultado, commit e evidência (saída dos testes).
+- Card do agente e cada passo dele: descrição com **Agente**, **Escopo**, **Arquivos que pode tocar**, **Critério de pronto**. Ao concluir, um comentário com resultado, commit e evidência (saída dos testes).
 
 ## Colunas (status)
 
@@ -59,7 +60,34 @@ A API do conector **não cria campos personalizados**.
 > **Ação manual do Allan (uma vez, na UI):** criar no folder **Aura Fit** o campo **Agente** (tipo Dropdown ou Texto). Opções sugeridas: `orquestrador`, `implementador`, `revisor`, `corretor`, `investigador`.
 > Ao existir, use `clickup_get_custom_fields` (com `list_id`) para pegar o id do campo e preencha em **todo** card, no `create_task`/`update_task` via `custom_fields`.
 
-**Enquanto não existir:** o papel e o id do agente já vão no título (`[papel · idcurto]`) e na linha `**Agente:**` da descrição. Isso é a fonte da verdade e será migrado para o campo depois.
+**Qual campo informa o subagente hoje?** Nenhum campo dedicado ainda (o campo **Agente** só existe depois que o Allan o criar na UI). Até lá, a identificação está em **dois lugares**: o **título** `[papel · idcurto]` e a linha `**Agente:**` da descrição (papel, tipo, modelo e id completo). O *Responsável* (assignee) do ClickUp **não** serve para isso: ele é sempre o Allan. Quando o campo existir, ele é o campo oficial, preenchido no card do agente **e em todos os seus passos (netos)**.
+
+## Diário de bordo (obrigatório, por passo)
+
+Objetivo: o Allan consegue reconstruir **o caminho, a evolução, a metodologia e as escolhas técnicas** de cada agente lendo só o ClickUp.
+
+**Regra:** para **cada coisa que o agente faz**, existe uma **subtarefa (neto)** do card do agente, criada **antes** de executá-la e movida `pendente → em progresso → concluído` em tempo real.
+Passo = uma unidade lógica de trabalho (ex.: "ler o brief", "escrever o teste", "ver RED", "implementar o schema", "gerar a migração", "rodar a suíte", "commit"). Não agrupe passos de natureza diferente; não crie um passo para cada comando de shell.
+
+**Cada passo tem um comentário no formato fixo**, escrito ao iniciar (o plano) e completado ao terminar:
+
+```
+🧭 PASSO <n> — <título>
+Objetivo: <o que este passo prova ou entrega>
+Caminho: <o que foi feito, em ordem, com arquivos/comandos relevantes>
+Metodologia: <TDD (RED→GREEN), leitura do brief, revisão em 2 etapas, bisect, etc. e por que>
+Escolhas técnicas: <decisão tomada> | Alternativas descartadas: <quais> | Motivo: <trade-off>
+Riscos/dúvidas: <o que pode dar errado ou ficou em aberto; se exigir o Allan, vira decisão>
+Evidência: <comando + saída resumida, commit, contagem de testes>
+Resultado: ✅ ok | ⚠️ com ressalva | ❌ falhou (e o que muda no próximo passo)
+```
+
+- **Ao iniciar:** cria a subtarefa, `em progresso`, e comenta `Objetivo`, `Metodologia` e a intenção de `Caminho`.
+- **Ao terminar:** completa `Caminho` real (se divergiu do plano, diga por quê), `Escolhas técnicas`, `Evidência`, `Resultado` e move para `concluído`.
+- **Escolha técnica não trivial** (biblioteca, modelagem, desvio do plano/spec): registrar **antes** de aplicar. Se afeta o escopo, custo ou segurança, é **decisão para o Allan** (ver "Alertas e decisões").
+- **Erro ou desvio:** passo novo `Corrigir: <o quê>` com a causa raiz. Nunca reescrever o passo falho; o histórico fica.
+- O card do agente (filho) recebe no fim um **resumo** de 5 linhas: passos, principais escolhas, desvios, evidências, commit.
+- Vale para **todos** os papéis: orquestrador, implementador, revisor, corretor, investigador. Revisor: um passo por eixo (conformidade com spec, qualidade), com os achados e a severidade em `Evidência`.
 
 ## Protocolo em tempo real
 
