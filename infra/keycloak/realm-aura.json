@@ -1,1 +1,47 @@
-{ "realm": "aura", "enabled": true }
+{
+  "realm": "aura",
+  "enabled": true,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "verifyEmail": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "sslRequired": "external",
+  "accessTokenLifespan": 600,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 0,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 604800,
+  "actionTokenGeneratedByUserLifespan": 900,
+  "passwordPolicy": "length(10) and notUsername",
+  "smtpServer": { "host": "mailpit", "port": "1025", "from": "no-reply@aura-fit.local", "fromDisplayName": "aura-fit" },
+  "clients": [
+    {
+      "clientId": "aura-identity",
+      "secret": "dev-client-secret-change-me",
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false
+    },
+    {
+      "clientId": "aura-web",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "redirectUris": ["http://localhost:5173/*", "aurafit://*"],
+      "webOrigins": ["http://localhost:5173"]
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-aura-identity",
+      "enabled": true,
+      "serviceAccountClientId": "aura-identity",
+      "clientRoles": { "realm-management": ["manage-users", "view-users"] }
+    }
+  ]
+}

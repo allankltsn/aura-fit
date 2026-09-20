@@ -61,12 +61,18 @@ services:
       - ./infra/keycloak/realm-aura.json:/opt/keycloak/data/import/realm-aura.json:ro
     depends_on:
       postgres: { condition: service_healthy }
+      mailpit: { condition: service_started }
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
       interval: 10s
       timeout: 5s
       retries: 30
       start_period: 40s
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "127.0.0.1:8025:8025"   # UI local para ver e-mails de verificação/reset
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.111.0
