@@ -69,6 +69,13 @@ Criar o branch `feat/rbac-auth` (o working tree tem mudanças suas pendentes que
 - **Dificuldades:** nenhuma bloqueante. A varredura prévia do plano encontrou 11 defeitos, todos resolvidos como *rulings* (ledger): `curl`/`jq` na imagem, `@aura/config` como dependência dos pacotes, build das dependências antes dos testes, `EmailNotVerifiedError` na porta, entre outros.
 - **Pendências:** a Task 4 precisa exercitar o healthcheck e o realm do Keycloak (a Task 0 não os iniciou). Cinco itens menores ficaram registrados para a revisão final (robustez do script de check, `.gitattributes`, healthcheck do Redis).
 
+### Daily 2 — após as Tasks 3 e 4
+
+- **Progresso:** Task 3 concluída (`38e6cc5`): `IdentityProviderPort`, provedor em memória e suíte de contrato com 8 casos (7 do plano + `EmailNotVerifiedError`, ruling R4). Task 4 implementada (`738c73a`): `KeycloakProvider` + realm importado + Mailpit; a **mesma suíte de 8 casos passa contra o Keycloak 26.0 real** (reexecutado pelo orquestrador: 8/8 Keycloak, 8/8 em memória). O healthcheck do Keycloak e o import do realm, pendentes desde a Task 0, foram exercitados: ambos saudáveis.
+- **Hoje:** revisão em duas etapas da Task 4 e fechamento da Sprint 1 para a sua revisão. Não inicio a Task 5.
+- **Dificuldades:** a sessão travou (buscas recursivas em `node_modules` no bind mount) e o Docker ficou parado; depois o limite diário do MCP do ClickUp (100 chamadas) estourou. Nada se perdeu: a evidência está no repositório e as atualizações pendentes estão em `docs/sprints/evidence/sprint-01/pending-clickup.md`.
+- **Pendências:** registrar no ClickUp quando o limite reiniciar; verificar e-mails de verificação/reset no Mailpit (não verificado); minors adiados das Tasks 0, 1 e 3 (ledger). Desvio: R5 (revogar sessão via admin API no reuso de refresh) não foi necessário, porque o Keycloak real já revoga a família.
+
 _(próximos dailies entram abaixo)_
 
 ## Review

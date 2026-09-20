@@ -1,0 +1,71 @@
+﻿=== RED (sem implementacao; exit 1) ===
+
+> @aura/identity-service@0.0.0 test /repo/apps/identity-service
+> vitest run "in-memory"
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /repo/apps/identity-service
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "aura_identity", schema "test" at "postgres:5432"
+
+Applying migration `20260920005947_init`
+
+Database reset successful
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260920005947_init/
+    └─ migration.sql
+
+ ❯ src/identity-provider/in-memory.provider.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/identity-provider/in-memory.provider.test.ts [ src/identity-provider/in-memory.provider.test.ts ]
+Error: Failed to load url ./errors (resolved id: ./errors) in /repo/apps/identity-service/src/identity-provider/provider.contract.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/.pnpm/vite@5.4.21_@types+node@26.6.2_terser@5.51.2/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  04:19:36
+   Duration  11.18s (transform 982ms, setup 5.42s, collect 0ms, tests 0ms, environment 0ms, prepare 2.95s)
+
+/repo/apps/identity-service:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @aura/identity-service@0.0.0 test: `vitest run "in-memory"`
+Exit status 1
+
+=== GREEN (com implementacao; exit 0) ===
+
+> @aura/identity-service@0.0.0 test /repo/apps/identity-service
+> vitest run "in-memory"
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /repo/apps/identity-service
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "aura_identity", schema "test" at "postgres:5432"
+
+Applying migration `20260920005947_init`
+
+Database reset successful
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260920005947_init/
+    └─ migration.sql
+
+ ✓ src/identity-provider/in-memory.provider.test.ts (8 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  04:20:25
+   Duration  10.71s (transform 804ms, setup 4.99s, collect 648ms, tests 11ms, environment 0ms, prepare 3.17s)
+
+

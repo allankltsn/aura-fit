@@ -163,6 +163,47 @@ Comando(s): <exatos>   Diretório: <cwd>   Código de saída: <n>
 
 **Verificação (o orquestrador não confia às cegas):** antes de mover o card, o orquestrador **reexecuta ao menos um comando** citado na evidência (por exemplo a suíte de testes) e confere o commit. Divergência = o card volta para `em progresso`, com comentário citando a diferença. O resultado fica em `verification-<card>.md`.
 
+## Orçamento de chamadas ao ClickUp (gerido pelo orquestrador)
+
+**Fato medido (2026-09-20):** o conector MCP do ClickUp tem **cota diária de 100 chamadas** (`RATE_LIMIT_EXCEEDED`, `limit: 100`, `retryAfter` ≈ 21 h). Não é bloqueio por suspeita de ataque: é o limite do plano, e estourá-lo deixa o ClickUp indisponível pelo resto do dia. Além disso, evitamos rajadas para não parecermos tráfego abusivo.
+
+**Regras (o orquestrador é o único dono do orçamento):**
+
+1. **Só o orquestrador chama o ClickUp.** Subagentes **não** usam as ferramentas do ClickUp: registram tudo no log local (abaixo) e devolvem no relatório. O orquestrador sincroniza em lote.
+2. **Teto operacional: 60 chamadas/dia** (40 de reserva para decisões urgentes do Allan). Contador em `docs/sprints/logs/clickup-budget.md`, atualizado a cada lote. Ao chegar a **50**, só decisões/alertas do Allan e o fechamento do card em andamento.
+3. **Sem rajadas:** chamadas ao ClickUp **sequenciais** (nunca várias na mesma mensagem), sem loops e sem polling. Ler comentários do Allan **1 vez por turno de trabalho**.
+4. **Sem releituras:** `get_list`, `get_custom_fields`, `get_task(expand_statuses)` no máximo 1 vez por sessão; resultado vai para o ledger (hoje: só `pendente`/`em progresso`/`concluído`, sem campo "Agente").
+5. **Alvo por Task (~10 chamadas):** mover o milestone para `em progresso` (1), criar o card do agente com descrição+critérios (1), criar 3 subtarefas já com descrição e checklist na mesma chamada (3), mover cada subtarefa para o estado final ao fechar, com tempo (3 + 1 lançamento agrupado), **um** comentário de encerramento no pai com o log agrupado (1), mover pai/milestone para `concluído` (2).
+6. **Alertas de decisão e de ação perigosa (🚨)** são sempre publicados na hora (têm prioridade sobre o teto).
+7. **Estourou a cota?** Nada trava: o trabalho segue, o log local continua e o orquestrador registra as pendências em `docs/sprints/evidence/sprint-XX/pending-clickup.md` para postar após o reinício.
+8. **Subagentes:** proibido `Glob`/`Grep` na raiz do worktree ou em `node_modules` e `Get-ChildItem -Recurse` (bind mount lento; travou o VSCode). Usar caminhos explícitos.
+
+## Log local de eventos (substitui comentários informativos avulsos)
+
+Comentários **informativos** (início, marcos, RED/GREEN, escolhas técnicas, resumos) **não vão** ao ClickUp um a um. Ficam em `docs/sprints/logs/sprint-XX/<card>.log.md`, uma linha por evento, no formato:
+
+```
+| data-hora (ISO) | agente (papel · id) | card/subtarefa | tipo | mensagem | evidência/caminho |
+```
+
+Tipos: `INICIO`, `MARCO`, `RED`, `GREEN`, `ESCOLHA`, `DESVIO`, `RISCO`, `PROBLEMA`, `SOLUCAO`, `DECISAO`, `ALERTA_PERIGO`, `FIM`.
+- Subagentes anexam ao log (arquivo dentro do worktree) e o orquestrador confere.
+- **Quando a tarefa pai for concluída**, o orquestrador posta **um único comentário** no pai com o log agrupado (resumo + tabela) e cita o caminho do arquivo. Problemas e soluções que funcionaram entram como `🩺 POST MORTEM` nesse mesmo comentário (base de conhecimento).
+- **Vão direto ao ClickUp** (não esperam o fim): pedidos de decisão ao Allan (@menção) e qualquer `ALERTA_PERIGO` com `🚨 CRITICIDADE`.
+
+## Fluxo de subtarefas (definido pelo Allan, prevalece sobre trechos anteriores)
+
+1. O agente responsável pelo status atual **assume a tarefa** (pai).
+2. Cria suas **subtarefas** com descrição e objetivo da implementação, e um **checklist de critérios** verificado ao final de cada uma.
+3. Coloca-se como **responsável** da subtarefa. Só o Allan é membro do workspace: enquanto não houver outro usuário, o responsável é o Allan e o agente se identifica por `[papel · idcurto]` no título e na linha `**Agente:**`.
+4. **Rastreamento de tempo** informado em cada subtarefa (`add_time_entry` ao concluir).
+5. As subtarefas seguintes repetem o mesmo ciclo.
+6. **Decisões do Allan:** notificação com @menção (`notify_all`) escrita **na subtarefa específica**; o orquestrador também o notifica e **expõe os impedimentos do time** ao Allan (CEO) no relatório.
+7. **Artefatos, comentários de entrega e demais** ficam **apenas na tarefa pai**.
+8. **Base de post mortem:** todo erro, problema ou decisão tomada vira comentário na **tarefa pai**, com o **problema** e a **solução que funcionou** (`🩺 POST MORTEM: Problema / Causa / Solução adotada / Como evitar`).
+9. **Ação considerada perigosa** por qualquer subagente, mesmo que o consenso final seja liberar ou bloquear, **SEMPRE** vira comentário na tarefa pai e o Allan é notificado com criticidade completa (`🚨 CRITICIDADE ALTA/CRÍTICA`, ação, risco, decisão do grupo, quem avaliou).
+10. Escopo de arquivos: subagentes leem/criam/editam/apagam **apenas** dentro do worktree `E:\allan\aura-fit\.claude\worktrees\rbac-auth`; ação prejudicial ou antiética não é executada.
+
 ## Protocolo em tempo real
 
 Quem faz cada ação de ClickUp:
