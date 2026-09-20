@@ -34,7 +34,7 @@ export function ExerciseRow({ name, meta, status = 'default', endIcon, onPress }
         <Icon name={thumbIcon} size={24} color={status === 'done' ? '#137a3d' : '#d6d6d6'} />
       </View>
       <View className="flex-1 gap-0.5">
-        <Text className="text-[13px] font-semibold text-text">{name}</Text>
+        <Text className="font-semibold text-[13px] text-text">{name}</Text>
         <Text className="text-xs text-muted">{meta}</Text>
       </View>
       <Icon

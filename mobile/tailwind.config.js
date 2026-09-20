@@ -52,8 +52,20 @@ module.exports = {
         light: '#f5f5f5',
         dark: '#1f1f1f',
         // semantic
-        success: { DEFAULT: '#22a45d', bg: '#e3f5ea', text: '#137a3d', dark: '#52d88a', 'bg-dark': 'rgba(34,164,93,0.16)' },
-        warning: { DEFAULT: '#e2a400', bg: '#fdf0cc', text: '#855800', dark: '#f1b93a', 'bg-dark': 'rgba(226,164,0,0.16)' },
+        success: {
+          DEFAULT: '#22a45d',
+          bg: '#e3f5ea',
+          text: '#137a3d',
+          dark: '#52d88a',
+          'bg-dark': 'rgba(34,164,93,0.16)',
+        },
+        warning: {
+          DEFAULT: '#e2a400',
+          bg: '#fdf0cc',
+          text: '#855800',
+          dark: '#f1b93a',
+          'bg-dark': 'rgba(226,164,0,0.16)',
+        },
         danger: { DEFAULT: '#b1111b', bg: '#fbe8e9', text: '#b1111b' },
         neutral: { DEFAULT: '#8d8d8d', bg: '#efefef', text: '#666666' },
         // surfaces — light theme

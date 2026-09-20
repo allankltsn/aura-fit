@@ -1,0 +1,12 @@
+# Security headers for static hosts that read this file (Netlify, Cloudflare
+# Pages). This is the source of truth — it's stronger than the CSP <meta>
+# tag in app/+html.tsx because headers can carry frame-ancestors and can't
+# be altered by any DOM manipulation. Deploying to Vercel? See vercel.json
+# instead — Vercel doesn't read this file.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload

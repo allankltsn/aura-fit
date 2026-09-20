@@ -21,7 +21,7 @@ export function Stepper({ label, value, step = 1, min = 0, onChange }: StepperPr
         <Icon name="minus" size={16} color="#b1111b" />
       </Pressable>
       <View className="flex-1 items-center">
-        <Text className="text-[10px] font-medium uppercase tracking-wide text-muted">{label}</Text>
+        <Text className="font-medium text-[10px] uppercase tracking-wide text-muted">{label}</Text>
         <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-lg text-text">
           {value}
         </Text>

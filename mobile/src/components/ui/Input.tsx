@@ -50,7 +50,7 @@ export function Input({
 
   return (
     <View className="gap-1.5">
-      {label ? <Text className="text-[13px] font-medium text-text">{label}</Text> : null}
+      {label ? <Text className="font-medium text-[13px] text-text">{label}</Text> : null}
       <View
         className={cn(
           'flex-row items-center gap-2 border bg-surface px-3',
@@ -80,7 +80,12 @@ export function Input({
         {trailing}
       </View>
       {hint ? (
-        <Text className={cn('text-xs', status === 'error' ? 'text-primary' : status === 'ok' ? 'text-success' : 'text-muted')}>
+        <Text
+          className={cn(
+            'text-xs',
+            status === 'error' ? 'text-primary' : status === 'ok' ? 'text-success' : 'text-muted'
+          )}
+        >
           {hint}
         </Text>
       ) : null}

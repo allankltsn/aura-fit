@@ -41,7 +41,9 @@ export function Sidebar({ items, activeKey, onSelect, user, rail = false }: Side
             >
               <Icon name={item.icon} size={20} color={active ? '#ffffff' : '#b0b0b0'} />
               {!rail && (
-                <Text className={cn('flex-1 text-[13px]', active ? 'font-semibold text-white' : 'font-medium text-ink-400')}>
+                <Text
+                  className={cn('flex-1 text-[13px]', active ? 'font-semibold text-white' : 'font-medium text-ink-400')}
+                >
                   {item.label}
                 </Text>
               )}
@@ -51,11 +53,16 @@ export function Sidebar({ items, activeKey, onSelect, user, rail = false }: Side
         })}
       </View>
 
-      <View className={cn('w-full flex-row items-center gap-2.5 border-t border-line-dark pt-3', rail && 'justify-center px-0')}>
+      <View
+        className={cn(
+          'w-full flex-row items-center gap-2.5 border-t border-line-dark pt-3',
+          rail && 'justify-center px-0'
+        )}
+      >
         <Avatar {...user.avatar} size={32} />
         {!rail && (
           <View>
-            <Text className="text-xs font-semibold text-white">{user.name}</Text>
+            <Text className="font-semibold text-xs text-white">{user.name}</Text>
             <Text className="text-[11px] text-ink-400">{user.role}</Text>
           </View>
         )}

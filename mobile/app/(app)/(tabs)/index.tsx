@@ -38,7 +38,7 @@ export default function HomeScreen() {
         <Card className="flex-row items-center gap-3">
           <Avatar initials={trainer.initials} tone={3} size={40} />
           <View className="flex-1">
-            <Text className="text-[13px] font-semibold text-text">{trainer.name}</Text>
+            <Text className="font-semibold text-[13px] text-text">{trainer.name}</Text>
             <Text className="text-xs text-muted">{trainer.role} • online</Text>
           </View>
           <Button size="sm" variant="secondary" onPress={() => router.push('/(app)/(tabs)/chat')}>

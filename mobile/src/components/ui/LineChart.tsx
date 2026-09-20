@@ -12,7 +12,16 @@ export type LineChartProps = {
 };
 
 /** Line chart with dashed gridlines + emphasized endpoint — matches the kit's chart() helper. */
-export function LineChart({ data, labels, max, ticks, formatValue = String, width = 320, height = 200, color = '#b1111b' }: LineChartProps) {
+export function LineChart({
+  data,
+  labels,
+  max,
+  ticks,
+  formatValue = String,
+  width = 320,
+  height = 200,
+  color = '#b1111b',
+}: LineChartProps) {
   const left = 36;
   const right = 10;
   const top = 14;
@@ -27,7 +36,16 @@ export function LineChart({ data, labels, max, ticks, formatValue = String, widt
   return (
     <Svg width={width} height={height}>
       {ticks.map((t) => (
-        <Line key={t} x1={left} x2={width - right} y1={y(t)} y2={y(t)} stroke="#e3e3e3" strokeWidth={1} strokeDasharray="3 4" />
+        <Line
+          key={t}
+          x1={left}
+          x2={width - right}
+          y1={y(t)}
+          y2={y(t)}
+          stroke="#e3e3e3"
+          strokeWidth={1}
+          strokeDasharray="3 4"
+        />
       ))}
       {ticks.map((t) => (
         <SvgText key={`tl-${t}`} x={left - 8} y={y(t) + 4} fontSize={10} fill="#666666" textAnchor="end">
@@ -39,7 +57,14 @@ export function LineChart({ data, labels, max, ticks, formatValue = String, widt
           {l}
         </SvgText>
       ))}
-      <Polyline points={points} fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       {data.map((v, i) =>
         i < n - 1 ? <Circle key={i} cx={x(i)} cy={y(v)} r={3.5} fill="#ffffff" stroke={color} strokeWidth={2} /> : null
       )}

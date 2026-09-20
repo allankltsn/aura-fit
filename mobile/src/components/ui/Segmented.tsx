@@ -26,7 +26,13 @@ export function Segmented({ options, value, onChange, size = 'md', full = false 
               active && 'bg-surface shadow-sm'
             )}
           >
-            <Text className={cn('font-medium', size === 'sm' ? 'text-xs' : 'text-[13px]', active ? 'text-primary font-semibold' : 'text-muted')}>
+            <Text
+              className={cn(
+                'font-medium',
+                size === 'sm' ? 'text-xs' : 'text-[13px]',
+                active ? 'font-semibold text-primary' : 'text-muted'
+              )}
+            >
               {opt}
             </Text>
           </Pressable>

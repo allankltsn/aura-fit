@@ -77,12 +77,12 @@ function ToastView({
         <Icon name={t.name} size={16} color={tone === 'warn' ? '#1f1f1f' : '#ffffff'} strokeWidth={2.5} />
       </View>
       <View className="flex-1 gap-0.5">
-        <Text className="text-[13px] font-semibold text-white">{title}</Text>
+        <Text className="font-semibold text-[13px] text-white">{title}</Text>
         {description ? <Text className="text-xs text-ink-400">{description}</Text> : null}
       </View>
       {actionLabel ? (
         <Pressable onPress={onAction}>
-          <Text className="text-[13px] font-semibold text-white">{actionLabel}</Text>
+          <Text className="font-semibold text-[13px] text-white">{actionLabel}</Text>
         </Pressable>
       ) : (
         <Pressable accessibilityLabel="Fechar" onPress={onClose} hitSlop={8}>

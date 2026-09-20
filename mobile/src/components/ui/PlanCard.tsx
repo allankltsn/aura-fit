@@ -29,7 +29,7 @@ export function PlanCard({ name, price, period, features, highlight = 'none', on
           <Tag label="Mais popular" />
         </View>
       )}
-      <Text className="text-sm font-semibold text-text">{name}</Text>
+      <Text className="font-semibold text-sm text-text">{name}</Text>
       <View className="flex-row items-baseline">
         <Text style={{ fontSize: 28, fontFamily: 'Inter_700Bold', letterSpacing: -0.6 }} className="text-text">
           {price}

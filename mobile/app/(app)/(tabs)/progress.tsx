@@ -33,7 +33,14 @@ export default function ProgressScreen() {
             </Text>
             <Segmented options={metrics} value={metric} onChange={setMetric} size="sm" />
           </View>
-          <LineChart data={load} labels={months} max={120} ticks={[0, 30, 60, 90, 120]} formatValue={(v) => `${v} kg`} width={chartWidth} />
+          <LineChart
+            data={load}
+            labels={months}
+            max={120}
+            ticks={[0, 30, 60, 90, 120]}
+            formatValue={(v) => `${v} kg`}
+            width={chartWidth}
+          />
         </Card>
 
         <View className="flex-row flex-wrap gap-3">
@@ -42,7 +49,7 @@ export default function ProgressScreen() {
               <Text className="text-[11px] text-muted">{s.label}</Text>
               <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-[22px] text-text">
                 {s.value}
-                <Text className="text-xs font-medium text-muted"> {s.unit}</Text>
+                <Text className="font-medium text-xs text-muted"> {s.unit}</Text>
               </Text>
               <Text className="text-[11px] text-success">{s.delta}</Text>
             </Card>

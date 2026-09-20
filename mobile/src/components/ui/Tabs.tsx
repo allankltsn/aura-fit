@@ -18,9 +18,15 @@ export function Tabs({ options, value, onChange, fill = false }: TabsProps) {
           <Pressable
             key={opt}
             onPress={() => onChange(opt)}
-            className={cn('border-b-2 py-2.5', fill && 'flex-1 items-center', active ? 'border-primary' : 'border-transparent')}
+            className={cn(
+              'border-b-2 py-2.5',
+              fill && 'flex-1 items-center',
+              active ? 'border-primary' : 'border-transparent'
+            )}
           >
-            <Text className={cn('text-sm', active ? 'font-semibold text-primary' : 'font-medium text-muted')}>{opt}</Text>
+            <Text className={cn('text-sm', active ? 'font-semibold text-primary' : 'font-medium text-muted')}>
+              {opt}
+            </Text>
           </Pressable>
         );
       })}

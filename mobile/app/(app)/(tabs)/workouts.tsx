@@ -41,15 +41,19 @@ export default function WorkoutsScreen() {
         </Card>
 
         <View className="gap-3">
-          <Text className="text-xs font-semibold text-muted">Próximos treinos</Text>
+          <Text className="font-semibold text-xs text-muted">Próximos treinos</Text>
           <View className="gap-2">
             {upcomingWorkouts.map((w) => (
-              <Pressable key={w.id} onPress={() => router.push(`/(app)/workout/${w.id}`)} className="flex-row items-center gap-3">
+              <Pressable
+                key={w.id}
+                onPress={() => router.push(`/(app)/workout/${w.id}`)}
+                className="flex-row items-center gap-3"
+              >
                 <View className="h-8 w-8 items-center justify-center rounded-sm bg-surface-2">
                   <Icon name="dumbbell" size={16} color="#666666" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[13px] font-semibold text-text">{w.name}</Text>
+                  <Text className="font-semibold text-[13px] text-text">{w.name}</Text>
                   <Text className="text-xs text-muted">{w.when}</Text>
                 </View>
                 <Icon name="chevronRight" size={16} color="#8d8d8d" />

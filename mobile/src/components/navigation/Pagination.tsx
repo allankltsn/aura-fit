@@ -26,9 +26,12 @@ export function Pagination({ page, pageCount, onChange }: PaginationProps) {
         <Pressable
           key={p}
           onPress={() => onChange(p)}
-          className={cn('h-8 min-w-8 items-center justify-center rounded-sm px-1', p === page ? 'bg-primary' : 'active:bg-surface-2')}
+          className={cn(
+            'h-8 min-w-8 items-center justify-center rounded-sm px-1',
+            p === page ? 'bg-primary' : 'active:bg-surface-2'
+          )}
         >
-          <Text className={cn('text-[13px] font-medium', p === page ? 'text-white' : 'text-muted')}>{p}</Text>
+          <Text className={cn('font-medium text-[13px]', p === page ? 'text-white' : 'text-muted')}>{p}</Text>
         </Pressable>
       ))}
       <Pressable

@@ -31,7 +31,7 @@ export function StatusBadge({ label, tone = 'neutral', size = 'md', dot = true }
       )}
     >
       {dot && <View className={cn('h-1.5 w-1.5 rounded-full', t.dot)} />}
-      <Text className={cn('text-[11px] font-medium', size === 'md' && 'text-xs', t.text)}>{label}</Text>
+      <Text className={cn('font-medium text-[11px]', size === 'md' && 'text-xs', t.text)}>{label}</Text>
     </View>
   );
 }
@@ -49,7 +49,7 @@ export function Tag({ label, tone = 'solid' }: { label: string; tone?: 'solid' |
     >
       <Text
         className={cn(
-          'text-[11px] font-semibold',
+          'font-semibold text-[11px]',
           tone === 'solid' && 'text-white',
           tone === 'outline' && 'text-primary',
           tone === 'dark' && 'text-white'
@@ -65,7 +65,7 @@ export function Tag({ label, tone = 'solid' }: { label: string; tone?: 'solid' |
 export function CountBadge({ count }: { count: number }) {
   return (
     <View className="h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1">
-      <Text className="text-[11px] font-semibold text-white">{count}</Text>
+      <Text className="font-semibold text-[11px] text-white">{count}</Text>
     </View>
   );
 }

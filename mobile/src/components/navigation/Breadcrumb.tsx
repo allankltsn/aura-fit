@@ -12,7 +12,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
         const last = i === items.length - 1;
         return (
           <Fragment key={item}>
-            <Text className={last ? 'text-[13px] font-semibold text-text' : 'text-[13px] text-muted'}>{item}</Text>
+            <Text className={last ? 'font-semibold text-[13px] text-text' : 'text-[13px] text-muted'}>{item}</Text>
             {!last && <Icon name="chevronRight" size={14} color="#666666" />}
           </Fragment>
         );

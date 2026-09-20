@@ -49,7 +49,11 @@ export function Avatar({ initials, photoUrl, size = 40, tone = 0, presence }: Av
   );
 }
 
-export type AvatarGroupProps = { avatars: Pick<AvatarProps, 'initials' | 'photoUrl' | 'tone'>[]; size?: number; max?: number };
+export type AvatarGroupProps = {
+  avatars: Pick<AvatarProps, 'initials' | 'photoUrl' | 'tone'>[];
+  size?: number;
+  max?: number;
+};
 
 /** Overlapping avatar stack — .avs in the kit, -10px overlap, "+N" overflow chip. */
 export function AvatarGroup({ avatars, size = 32, max = 4 }: AvatarGroupProps) {

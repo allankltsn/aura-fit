@@ -13,7 +13,13 @@ export default function CheckEmailScreen() {
   return (
     <AuthBackground>
       <SafeAreaView className="flex-1 items-center justify-center gap-5 px-6">
-        <View className={isVerify ? 'h-16 w-16 items-center justify-center rounded-full bg-primary-soft' : 'h-16 w-16 items-center justify-center rounded-full bg-success-bg'}>
+        <View
+          className={
+            isVerify
+              ? 'h-16 w-16 items-center justify-center rounded-full bg-primary-soft'
+              : 'h-16 w-16 items-center justify-center rounded-full bg-success-bg'
+          }
+        >
           <Icon name={isVerify ? 'mail' : 'check'} size={28} color={isVerify ? '#b1111b' : '#22a45d'} />
         </View>
 
@@ -36,7 +42,7 @@ export default function CheckEmailScreen() {
         {isVerify && (
           <Link href="/(auth)/login" asChild>
             <Pressable hitSlop={8}>
-              <Text className="text-[13px] font-medium text-ink-400">Voltar para o login</Text>
+              <Text className="font-medium text-[13px] text-ink-400">Voltar para o login</Text>
             </Pressable>
           </Link>
         )}

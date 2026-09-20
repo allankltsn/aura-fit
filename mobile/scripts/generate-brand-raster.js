@@ -10,8 +10,14 @@ const out = (f) => path.join(__dirname, '..', 'assets', f);
 async function run() {
   await sharp(brand('app-icon-source.svg')).resize(1024, 1024).png().toFile(out('icon.png'));
   await sharp(brand('splash-icon-source.svg')).resize(1024, 1024).png().toFile(out('splash-icon.png'));
-  await sharp(brand('android-foreground-source.svg')).resize(1024, 1024).png().toFile(out('android-icon-foreground.png'));
-  await sharp(brand('android-monochrome-source.svg')).resize(1024, 1024).png().toFile(out('android-icon-monochrome.png'));
+  await sharp(brand('android-foreground-source.svg'))
+    .resize(1024, 1024)
+    .png()
+    .toFile(out('android-icon-foreground.png'));
+  await sharp(brand('android-monochrome-source.svg'))
+    .resize(1024, 1024)
+    .png()
+    .toFile(out('android-icon-monochrome.png'));
   await sharp({ create: { width: 1024, height: 1024, channels: 4, background: '#1f1f1f' } })
     .png()
     .toFile(out('android-icon-background.png'));

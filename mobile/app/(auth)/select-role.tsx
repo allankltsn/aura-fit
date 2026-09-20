@@ -7,9 +7,19 @@ import { Icon, type IconName } from '@/components/icons';
 import { cn } from '@/lib/cn';
 
 const roleOptions: { key: string; label: string; description: string; icon: IconName }[] = [
-  { key: 'trainer', label: 'Personal Trainer', description: 'Gerencie seus alunos, treinos e finanças.', icon: 'dumbbell' },
+  {
+    key: 'trainer',
+    label: 'Personal Trainer',
+    description: 'Gerencie seus alunos, treinos e finanças.',
+    icon: 'dumbbell',
+  },
   { key: 'student', label: 'Aluno', description: 'Acesse seus treinos, progresso e informações.', icon: 'users' },
-  { key: 'admin', label: 'Administrador', description: 'Gerencie a plataforma, usuários e configurações.', icon: 'settings' },
+  {
+    key: 'admin',
+    label: 'Administrador',
+    description: 'Gerencie a plataforma, usuários e configurações.',
+    icon: 'settings',
+  },
 ];
 
 /** Shown when an account has more than one profile — kit's "Selecione seu perfil". */
@@ -24,7 +34,9 @@ export default function SelectRoleScreen() {
         <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-h2 text-text">
           Selecione seu perfil
         </Text>
-        <Text className="text-[13px] text-muted">Você possui mais de um perfil de acesso. Escolha com qual deseja continuar.</Text>
+        <Text className="text-[13px] text-muted">
+          Você possui mais de um perfil de acesso. Escolha com qual deseja continuar.
+        </Text>
       </View>
 
       <View className="gap-3">
@@ -34,9 +46,17 @@ export default function SelectRoleScreen() {
             <Pressable
               key={role.key}
               onPress={() => setSelected(role.key)}
-              className={cn('flex-row items-center gap-3 rounded-lg border p-4', active ? 'border-primary bg-primary-soft' : 'border-line bg-surface')}
+              className={cn(
+                'flex-row items-center gap-3 rounded-lg border p-4',
+                active ? 'border-primary bg-primary-soft' : 'border-line bg-surface'
+              )}
             >
-              <View className={cn('h-11 w-11 items-center justify-center rounded-md', active ? 'bg-primary' : 'bg-surface-2')}>
+              <View
+                className={cn(
+                  'h-11 w-11 items-center justify-center rounded-md',
+                  active ? 'bg-primary' : 'bg-surface-2'
+                )}
+              >
                 <Icon name={role.icon} size={22} color={active ? '#ffffff' : '#666666'} />
               </View>
               <View className="flex-1 gap-0.5">

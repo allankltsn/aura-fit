@@ -23,7 +23,11 @@ export default function ChatScreen() {
         </View>
       </View>
 
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1" keyboardVerticalOffset={90}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1"
+        keyboardVerticalOffset={90}
+      >
         <ScrollView contentContainerClassName="gap-2.5 px-3 py-3">
           {chatMessages.map((m) => (
             <View
@@ -33,8 +37,12 @@ export default function ChatScreen() {
                 m.from === 'me' ? 'self-end rounded-br-md bg-primary' : 'self-start rounded-bl-md bg-surface-2'
               )}
             >
-              <Text className={cn('text-[12.5px] leading-[17px]', m.from === 'me' ? 'text-white' : 'text-text')}>{m.text}</Text>
-              <Text className={cn('mt-1 text-right text-[10px] opacity-70', m.from === 'me' ? 'text-white' : 'text-muted')}>
+              <Text className={cn('text-[12.5px] leading-[17px]', m.from === 'me' ? 'text-white' : 'text-text')}>
+                {m.text}
+              </Text>
+              <Text
+                className={cn('mt-1 text-right text-[10px] opacity-70', m.from === 'me' ? 'text-white' : 'text-muted')}
+              >
                 {m.time}
               </Text>
             </View>

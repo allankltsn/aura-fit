@@ -31,7 +31,7 @@ export function Chip({ label, selected = false, onPress, tone = 'solid', size = 
     >
       <Text
         className={cn(
-          'text-xs font-medium',
+          'font-medium text-xs',
           selected ? (tone === 'solid' ? 'text-white' : 'text-primary') : 'text-muted'
         )}
       >

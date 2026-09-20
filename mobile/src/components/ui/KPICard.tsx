@@ -18,14 +18,10 @@ export function KPICard({ label, value, delta, deltaNegative = false, icon, tone
 
   return (
     <Card
-      className={cn(
-        'gap-2',
-        tone === 'hi' && 'border-primary bg-primary',
-        tone === 'dark' && 'border-dark bg-dark'
-      )}
+      className={cn('gap-2', tone === 'hi' && 'border-primary bg-primary', tone === 'dark' && 'border-dark bg-dark')}
     >
       <View className="flex-row items-center justify-between">
-        <Text className={cn('text-xs font-medium', onTint ? 'text-white/85' : 'text-muted')}>{label}</Text>
+        <Text className={cn('font-medium text-xs', onTint ? 'text-white/85' : 'text-muted')}>{label}</Text>
         {icon}
       </View>
       <Text
@@ -37,9 +33,12 @@ export function KPICard({ label, value, delta, deltaNegative = false, icon, tone
       {delta ? (
         <View className="flex-row items-center gap-1.5">
           <View
-            className={cn('h-[5px] w-[5px] rounded-full', deltaNegative ? 'bg-primary' : onTint ? 'bg-white' : 'bg-success')}
+            className={cn(
+              'h-[5px] w-[5px] rounded-full',
+              deltaNegative ? 'bg-primary' : onTint ? 'bg-white' : 'bg-success'
+            )}
           />
-          <Text className={cn('text-[11px] font-medium', onTint ? 'text-white/85' : 'text-muted')}>{delta}</Text>
+          <Text className={cn('font-medium text-[11px]', onTint ? 'text-white/85' : 'text-muted')}>{delta}</Text>
         </View>
       ) : null}
     </Card>

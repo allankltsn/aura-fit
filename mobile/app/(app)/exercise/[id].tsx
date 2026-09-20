@@ -26,13 +26,17 @@ export default function ExerciseExecutionScreen() {
 
   useEffect(() => {
     if (!resting) return;
-    if (secondsLeft <= 0) {
-      setResting(false);
-      return;
-    }
-    const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [resting, secondsLeft]);
+    const interval = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          setResting(false);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [resting]);
 
   function registerSet() {
     show({ title: 'Série registrada', description: `${exercise.name} · ${load} kg × ${reps}`, tone: 'success' });
