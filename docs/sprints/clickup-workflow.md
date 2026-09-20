@@ -17,12 +17,12 @@ Regra de ouro: **o card muda ANTES da ação, nunca depois.** Se o card não diz
 |---|---|---|---|
 | Pai | `milestone` | uma Task do plano (docs/superpowers/plans) | `Task 3 — IdentityProviderPort…` |
 | Filho | Task (padrão, omitir `task_type`) | trabalho de **um agente** nessa Task (implementar, revisar, re-revisar, corrigir) | `[implementador · a1b2c3d4] Implementar Task 3` |
-| Neto | Task (subtarefa do filho) | **um passo** que o agente executa (ler brief, escrever teste, ver RED, implementar X, rodar testes, commit…) | `[implementador · a1b2c3d4] Passo 2 — escrever teste de contrato` |
+| Neto | Task (subtarefa do filho) | **um checkpoint lógico** do agente (uma capacidade ou entregável verificável) | `[implementador · a1b2c3d4] CP2 — CRUD de roles e permissões` |
 
 - Só existem estes tipos na conta: `milestone`, `meeting_note`, `form_response`, `workflow` etc. **Não existem** Feature/Bug. Não tente criar outros.
 - **Título do filho:** `[papel · idcurto] verbo + objeto`. Papéis: `orquestrador`, `implementador`, `revisor`, `corretor`, `investigador`. `idcurto` = 8 primeiros caracteres do id do subagente; o orquestrador não usa id.
 - **Todo agente que atua no projeto tem seu próprio card filho.** Nada de trabalho sem card.
-- Card do agente e cada passo dele: descrição com **Agente**, **Escopo**, **Arquivos que pode tocar**, **Critério de pronto**. Ao concluir, um comentário com resultado, commit e evidência (saída dos testes).
+- Card do agente e cada checkpoint dele: descrição com **Agente**, **Escopo**, **Arquivos que pode tocar**, **Critério de pronto**. Ao concluir, um comentário com resultado, commit e evidência (saída dos testes).
 
 ## Colunas (status)
 
@@ -60,34 +60,58 @@ A API do conector **não cria campos personalizados**.
 > **Ação manual do Allan (uma vez, na UI):** criar no folder **Aura Fit** o campo **Agente** (tipo Dropdown ou Texto). Opções sugeridas: `orquestrador`, `implementador`, `revisor`, `corretor`, `investigador`.
 > Ao existir, use `clickup_get_custom_fields` (com `list_id`) para pegar o id do campo e preencha em **todo** card, no `create_task`/`update_task` via `custom_fields`.
 
-**Qual campo informa o subagente hoje?** Nenhum campo dedicado ainda (o campo **Agente** só existe depois que o Allan o criar na UI). Até lá, a identificação está em **dois lugares**: o **título** `[papel · idcurto]` e a linha `**Agente:**` da descrição (papel, tipo, modelo e id completo). O *Responsável* (assignee) do ClickUp **não** serve para isso: ele é sempre o Allan. Quando o campo existir, ele é o campo oficial, preenchido no card do agente **e em todos os seus passos (netos)**.
+**Qual campo informa o subagente hoje?** Nenhum campo dedicado ainda (o campo **Agente** só existe depois que o Allan o criar na UI). Até lá, a identificação está em **dois lugares**: o **título** `[papel · idcurto]` e a linha `**Agente:**` da descrição (papel, tipo, modelo e id completo). O *Responsável* (assignee) do ClickUp **não** serve para isso: ele é sempre o Allan. Quando o campo existir, ele é o campo oficial, preenchido no card do agente **e em todos os seus checkpoints (netos)**.
 
-## Diário de bordo (obrigatório, por passo)
+## Diário de bordo (obrigatório, por checkpoint)
 
 Objetivo: o Allan consegue reconstruir **o caminho, a evolução, a metodologia e as escolhas técnicas** de cada agente lendo só o ClickUp.
 
-**Regra:** para **cada coisa que o agente faz**, existe uma **subtarefa (neto)** do card do agente, criada **antes** de executá-la e movida `pendente → em progresso → concluído` em tempo real.
-Passo = uma unidade lógica de trabalho (ex.: "ler o brief", "escrever o teste", "ver RED", "implementar o schema", "gerar a migração", "rodar a suíte", "commit"). Não agrupe passos de natureza diferente; não crie um passo para cada comando de shell.
+**Regra:** o trabalho de cada agente é dividido em **checkpoints lógicos e determinísticos** (o "grão" é o **entregável ou a capacidade**, não a ação técnica). Cada checkpoint é uma **subtarefa (neto)** do card do agente, criada **antes** de começar e movida `pendente → em progresso → concluído` em tempo real.
 
-**Cada passo tem um comentário no formato fixo**, escrito ao iniciar (o plano) e completado ao terminar:
+**O que é um checkpoint (e o que não é):**
+- É um **resultado verificável**: alguém consegue dizer "está pronto ou não está" por um critério objetivo (testes verdes, comando que passa, artefato existente).
+- É nomeado pela **capacidade entregue**, nunca pelo detalhe de implementação.
+- **Quantidade:** de **3 a 8 por card de agente**. Menos de 3 = grão grosso demais; mais de 8 = grão fino demais, reagrupe.
+- **Ordem determinística:** os checkpoints seguem uma sequência previsível e são **definidos no card do agente antes de começar** (o orquestrador os lista no brief; o agente só ajusta se justificar).
+- Um checkpoint tem **critério de pronto** escrito na descrição.
+
+| ✅ Grão certo (checkpoint) | ❌ Grão fino demais (não criar) |
+|---|---|
+| `CRUD de usuários` | `criar rota /users/{id}` |
+| `CRUD de roles e permissões` | `adicionar DTO de role` |
+| `Configurações de segurança (guards, headers, rate limit)` | `importar helmet` |
+| `Schema Prisma e migração inicial` | `escrever model User` |
+| `Testes de contrato do provedor` | `rodar vitest uma vez` |
+| Revisor: `Conformidade com a spec` / `Qualidade de código` | `ler o arquivo X` |
+
+**Checkpoints por papel (modelos):**
+- **Implementador:** um por capacidade do escopo da Task, mais `Testes verdes e evidência` e `Commit` no fim. Ex. Task 2: `Schema Prisma e migração` → `Seed RBAC idempotente` → `Testes verdes` → `Commit`.
+- **Revisor:** `Conformidade com plano/spec` → `Qualidade de código` → `Veredito e achados por severidade`.
+- **Corretor:** `Reproduzir o defeito (teste que falha)` → `Correção` → `Regressão verde`.
+- **Investigador:** `Levantamento de evidências` → `Causa raiz` → `Recomendação`.
+- **Orquestrador:** um por fase (ex.: `Brief e escopo`, `Despacho`, `Verificação`, `Daily`).
+
+**Detalhe técnico fino** (arquivos, comandos, rota a rota) **não vira card**: vai dentro do comentário do checkpoint, no campo `Caminho`.
+
+**Cada checkpoint tem um comentário no formato fixo**, escrito ao iniciar (o plano) e completado ao terminar:
 
 ```
-🧭 PASSO <n> — <título>
-Objetivo: <o que este passo prova ou entrega>
+🧭 CHECKPOINT <n> — <capacidade entregue>
+Objetivo: <o que este checkpoint prova ou entrega>
 Caminho: <o que foi feito, em ordem, com arquivos/comandos relevantes>
 Metodologia: <TDD (RED→GREEN), leitura do brief, revisão em 2 etapas, bisect, etc. e por que>
 Escolhas técnicas: <decisão tomada> | Alternativas descartadas: <quais> | Motivo: <trade-off>
 Riscos/dúvidas: <o que pode dar errado ou ficou em aberto; se exigir o Allan, vira decisão>
 Evidência: <comando + saída resumida, commit, contagem de testes>
-Resultado: ✅ ok | ⚠️ com ressalva | ❌ falhou (e o que muda no próximo passo)
+Resultado: ✅ ok | ⚠️ com ressalva | ❌ falhou (e o que muda no próximo checkpoint)
 ```
 
-- **Ao iniciar:** cria a subtarefa, `em progresso`, e comenta `Objetivo`, `Metodologia` e a intenção de `Caminho`.
+- **Ao iniciar o checkpoint:** move para `em progresso` e comenta `Objetivo`, `Metodologia` e a intenção de `Caminho`. (Os checkpoints do card já existem como subtarefas `pendente` desde o brief; assim o Allan vê o plano inteiro antes do trabalho.)
 - **Ao terminar:** completa `Caminho` real (se divergiu do plano, diga por quê), `Escolhas técnicas`, `Evidência`, `Resultado` e move para `concluído`.
 - **Escolha técnica não trivial** (biblioteca, modelagem, desvio do plano/spec): registrar **antes** de aplicar. Se afeta o escopo, custo ou segurança, é **decisão para o Allan** (ver "Alertas e decisões").
-- **Erro ou desvio:** passo novo `Corrigir: <o quê>` com a causa raiz. Nunca reescrever o passo falho; o histórico fica.
-- O card do agente (filho) recebe no fim um **resumo** de 5 linhas: passos, principais escolhas, desvios, evidências, commit.
-- Vale para **todos** os papéis: orquestrador, implementador, revisor, corretor, investigador. Revisor: um passo por eixo (conformidade com spec, qualidade), com os achados e a severidade em `Evidência`.
+- **Erro ou desvio:** checkpoint novo `Corrigir: <o quê>` com a causa raiz. Nunca reescrever o checkpoint falho; o histórico fica.
+- O card do agente (filho) recebe no fim um **resumo** de 5 linhas: checkpoints, principais escolhas, desvios, evidências, commit.
+- Vale para **todos** os papéis: orquestrador, implementador, revisor, corretor, investigador. Revisor: um checkpoint por eixo (conformidade com a spec, qualidade), com os achados e a severidade em `Evidência`.
 
 ## Protocolo em tempo real
 
@@ -100,7 +124,7 @@ Quem faz cada ação de ClickUp:
    - A cada marco (RED confirmado, implementação pronta, testes verdes, commit) um comentário curto no card.
    - Se as ferramentas do ClickUp não estiverem disponíveis para ele, **avisa no relatório final** e o orquestrador registra os marcos.
 3. **Subagente, ao terminar:** comentário final (resultado, commit, saída dos testes) e devolve ao orquestrador.
-4. **Orquestrador, depois do retorno:** confere a evidência, move o card ao próximo status do fluxo (`code review`, `qa testing`, `aguardando aceite`, `concluído`) e só então despacha o próximo passo.
+4. **Orquestrador, depois do retorno:** confere a evidência, move o card ao próximo status do fluxo (`code review`, `qa testing`, `aguardando aceite`, `concluído`) e só então despacha o próximo agente.
 5. **Antes de despachar um revisor:** o orquestrador cria o card do revisor; o do implementador já foi movido antes.
 6. Mudar de status **antes** de mudar a ação (ex.: mover para `em progresso` antes de rodar). Nunca mover retroativamente. Só cards de histórico (Tasks 0–2 desta sprint) foram criados retroativamente, e dizem isso na descrição.
 
