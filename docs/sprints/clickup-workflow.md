@@ -25,20 +25,32 @@ Regra de ouro: **o card muda ANTES da ação, nunca depois.** Se o card não diz
 
 ## Colunas (status)
 
-Hoje a lista só tem 3 status, e **a API não cria novos**. Use exatamente:
+Fluxo de um card de Task (milestone) e dos cards de agente. **A API não cria status: o Allan os cria na UI** (Configurações da lista → Status). Nomes exatos, nesta ordem:
 
-| Status | Significado |
-|---|---|
-| `pendente` | planejado, ninguém começou |
-| `em progresso` | um agente está executando **agora** |
-| `concluído` | terminado **e verificado** (evidência no comentário) |
+| # | Status | Tipo no ClickUp | Significado | Quem move |
+|---|---|---|---|---|
+| 1 | `backlog` | Aberto | previsto no plano, sem sprint | orquestrador |
+| 2 | `pendente` | Aberto | na sprint, pronto para começar (brief pronto) | orquestrador |
+| 3 | `em progresso` | Ativo | um agente implementa **agora** | orquestrador, antes de despachar |
+| 4 | `aguardando decisão` | Ativo | precisa de resposta do Allan | quem levanta a dúvida |
+| 5 | `bloqueado` | Ativo | impedimento externo (permissão, infra, ferramenta) | quem detecta |
+| 6 | `code review` | Ativo | revisão de conformidade com plano/spec **e** de qualidade | orquestrador |
+| 7 | `qa testing` | Ativo | testes de contrato/integração/e2e, verificação com evidência | orquestrador |
+| 8 | `qa bugs` | Ativo | QA achou defeito; corretor trabalhando | orquestrador |
+| 9 | `aguardando aceite` | Ativo | pronto; espera o aceite do Allan (Sprint Review) | orquestrador |
+| 10 | `concluído` | Fechado | aceito e **verificado** (evidência no comentário) | orquestrador |
 
-> **Ação manual do Allan (uma vez, na UI):** adicionar as colunas `aguardando decisão`, `em revisão` e `bloqueado`. Depois disso, use-as:
-> - `aguardando decisão` — o agente precisa de resposta do Allan (ver "Alertas").
-> - `em revisão` — implementação pronta, revisor trabalhando.
-> - `bloqueado` — impedimento externo (ferramenta, permissão, infraestrutura).
->
-> **Enquanto elas não existirem:** mantenha `em progresso` e prefixe o título com `❓ DECISÃO:` ou `⛔ BLOQUEADO:`. Remova o prefixo ao resolver.
+Caminho normal: `backlog → pendente → em progresso → code review → qa testing → aguardando aceite → concluído`.
+Desvios: `code review` com achados → volta a `em progresso` (corretor); `qa testing` com defeito → `qa bugs` → volta a `qa testing`; qualquer estado → `aguardando decisão` ou `bloqueado` e retorna ao anterior.
+
+Regras por status:
+- `code review`: o card **do revisor** (filho) nasce aqui; achados Critical/Important voltam o pai a `em progresso`. Minor vira lista no comentário.
+- `qa testing`: evidência obrigatória (comando, saída, contagem de testes). Defeito encontrado = **novo card filho** tipo Task no status `qa bugs`, com passos para reproduzir.
+- `qa bugs`: só sai quando o teste que reproduzia o defeito passa e o pai volta a `qa testing`.
+- `aguardando aceite`: usado na Sprint Review; só o Allan move para `concluído` (ou o orquestrador após o aceite dele por comentário).
+- Cards filhos de agente: usam o subconjunto `pendente → em progresso → concluído` (e `bloqueado`/`aguardando decisão` quando couber).
+
+> **Enquanto as colunas novas não existirem:** só há `pendente`, `em progresso` e `concluído`. Mantenha `em progresso` e prefixe o título com `❓ DECISÃO:`, `⛔ BLOQUEADO:`, `🔍 CODE REVIEW:`, `🧪 QA:` ou `🐞 QA BUGS:`. Remova o prefixo ao trocar de fase.
 
 ## Campo personalizado "Agente"
 
@@ -60,7 +72,7 @@ Quem faz cada ação de ClickUp:
    - A cada marco (RED confirmado, implementação pronta, testes verdes, commit) um comentário curto no card.
    - Se as ferramentas do ClickUp não estiverem disponíveis para ele, **avisa no relatório final** e o orquestrador registra os marcos.
 3. **Subagente, ao terminar:** comentário final (resultado, commit, saída dos testes) e devolve ao orquestrador.
-4. **Orquestrador, depois do retorno:** confere a evidência, move o card (`em revisão`/`concluído`) e só então despacha o próximo passo.
+4. **Orquestrador, depois do retorno:** confere a evidência, move o card ao próximo status do fluxo (`code review`, `qa testing`, `aguardando aceite`, `concluído`) e só então despacha o próximo passo.
 5. **Antes de despachar um revisor:** o orquestrador cria o card do revisor; o do implementador já foi movido antes.
 6. Mudar de status **antes** de mudar a ação (ex.: mover para `em progresso` antes de rodar). Nunca mover retroativamente. Só cards de histórico (Tasks 0–2 desta sprint) foram criados retroativamente, e dizem isso na descrição.
 
@@ -69,7 +81,7 @@ Quem faz cada ação de ClickUp:
 Quando qualquer agente precisar de uma decisão do Allan:
 
 1. **Não perguntar só no terminal.** Registrar no ClickUp:
-   - card atribuído ao Allan (`assignees: ["81487793"]`) e movido para `aguardando decisão` (ou título `❓ DECISÃO:`);
+   - card atribuído ao Allan (`assignees: ["81487793"]`) e movido para `aguardando decisão` (ou título `❓ DECISÃO:`); o status anterior vai no comentário para saber para onde voltar;
    - comentário com **@menção** para gerar notificação: `[@Allan](#user_mention#81487793)`, com `notify_all: true`;
    - comentário no formato:
 
