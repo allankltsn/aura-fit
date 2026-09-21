@@ -184,6 +184,14 @@ Comando(s): <exatos>   Diretório: <cwd>   Código de saída: <n>
 
 **Verificação (o orquestrador não confia às cegas):** antes de mover o card, o orquestrador **reexecuta ao menos um comando** citado na evidência (por exemplo a suíte de testes) e confere o commit. Divergência = o card volta para `em progresso`, com comentário citando a diferença. O resultado fica em `verification-<card>.md`.
 
+## Quadro Kanban local (extensão Kanban Markdown do VS Code)
+
+- **Onde fica:** na **raiz do projeto**, `E:llanura-fit\docs\sprintsoard\sprint-XX\<status>\<card>.md`, com a configuração em `E:llanura-fit\.vscode\settings.json` (chaves `kanban-markdown.*`). **Não** fica no worktree, para que o Allan abra a raiz no VS Code e veja o quadro.
+- **Permissão dos subagentes:** leem e escrevem **apenas dentro do worktree**, com **uma única exceção**: a pasta `docs/sprints/board/` da raiz (criar, editar, mover e apagar cards do quadro). Nada mais fora do worktree, inclusive o restante da raiz e o `.vscode`.
+- **Formato do card:** cabeçalho YAML gerido pela extensão (`id`, `status`, `priority`, `assignee`, `epic`, `dueDate`, `created`, `modified`, `completedAt`, `labels`, `order`). **Não criar campos extras no cabeçalho**: a extensão os apaga ao regravar. Mapeamento: pai = `epic` (a Task); agente = `assignee` (`papel · idcurto`); papel, Task, retroativo/abandonado = `labels`; checklist de critérios, tempo, evidência, post mortem, próximo responsável e ids do ClickUp = corpo em Markdown.
+- **Status = pasta = coluna:** o arquivo do card fica na subpasta com o nome do status (`open`, `pending`, `in-progress`, `in-review`, `completed`, `accepted`, `rejected`, `blocked`, `closed`) e o campo `status` tem de coincidir. Mudar de status é **mover o arquivo** e ajustar `status` e `modified`.
+- As regras de fluxo, checklist, evidência, post mortem e alerta 🚨 deste documento valem igualmente no quadro local; o ClickUp passa a ser espelho por marcos.
+
 ## Ciclo de handoff entre agentes (padrão de todas as Tasks)
 
 Cada Task percorre **sempre** a mesma esteira. Quem tem a Task em cada etapa é o **responsável** (registrado no título `[papel · idcurto]` e na linha `Próximo responsável:` da descrição do card; o assignee do ClickUp é sempre o Allan).
