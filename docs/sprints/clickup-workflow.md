@@ -24,7 +24,28 @@ Regra de ouro: **o card muda ANTES da ação, nunca depois.** Se o card não diz
 - **Todo agente que atua no projeto tem seu próprio card filho.** Nada de trabalho sem card.
 - Card do agente e cada checkpoint dele: descrição com **Agente**, **Escopo**, **Arquivos que pode tocar**, **Critério de pronto**. Ao concluir, um comentário com resultado, commit e evidência (saída dos testes).
 
-## Colunas (status)
+## Colunas (status) — modelo Scrum do ClickUp (em uso desde 2026-09-21)
+
+A lista Sprint 1 usa o modelo **Scrum** padrão. Nomes exatos na API (**usar exatamente assim** em `update_task`): `Open`, `pending`, `in progress`, `completed`, `in review`, `accepted`, `rejected`, `blocked`, `Closed`.
+
+| Fluxo do processo | Status Scrum (API) | Observação |
+|---|---|---|
+| backlog | `Open` | previsto, sem sprint |
+| pendente (pronto para começar) | `pending` | |
+| em progresso | `in progress` | um agente trabalha agora |
+| aguardando decisão | `blocked` + prefixo `❓ DECISÃO:` no título | com @menção ao Allan |
+| bloqueado | `blocked` (prefixo `⛔ BLOQUEADO:` se não for decisão) | |
+| code review | `in review` (prefixo `🔍 CODE REVIEW:`) | conformidade + qualidade |
+| qa testing | `in review` (prefixo `🧪 QA:`) | |
+| qa bugs | `rejected` | defeito achado; corretor trabalha; vira card filho |
+| aguardando aceite | `completed` | pronto e verificado; espera o Allan |
+| aceito | `accepted` | só o Allan (ou o orquestrador após o aceite dele por comentário) |
+| concluído/encerrado | `Closed` | após a Sprint Review |
+
+Caminho normal: `Open → pending → in progress → in review → completed → accepted → Closed`. Cards filhos e subtarefas de agente: `pending → in progress → completed`.
+
+**Abaixo, a tabela original (nomes em português) continua valendo como descrição do significado de cada fase; use a coluna "Status Scrum (API)" acima para o nome real.** Ao criar cards use `status: "pending"`/`"in progress"`.
+
 
 Fluxo de um card de Task (milestone) e dos cards de agente. **A API não cria status: o Allan os cria na UI** (Configurações da lista → Status). Nomes exatos, nesta ordem:
 

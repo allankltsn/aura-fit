@@ -4,4 +4,5 @@ Cota do plano: 100 chamadas/dia. Teto operacional: 60. Reserva: 40 (decisões/al
 
 | Dia | Usadas (estimado) | Situação |
 |---|---|---|
-| 2026-09-20 | 100/100 | Cota estourada ~01:30 (-03:00); reinício ≈ 21 h depois (`retryAfter` 75505 s). Pendências em docs/sprints/evidence/sprint-01/pending-clickup.md |
+| 2026-09-20 | 100/100 | Cota estourada ~01:30 (-03:00); reinício ≈ 21 h depois |
+| 2026-09-21 | 13/100 | Sincronização da fila da Task 3/4 após adotar o modelo Scrum (1 leitura, 1 comentário, 9 status, 2 tempos) |
