@@ -1,6 +1,6 @@
 # Sprint 2 — API de identidade rodando (cadastro, login, autorização e RBAC)
 
-Status: **aguardando aprovação do planning** · Tasks 5–10 do plano · Você: revisor técnico e negocial
+Status: **planning aprovado em 2026-09-21 (R16 e R17 aprovados)** · Tasks 5–10 do plano · Você: revisor técnico e negocial
 
 ## Objetivo
 
@@ -101,7 +101,7 @@ Sprint 1 aceita (Tasks 3 e 4 em `accepted`); Keycloak 26.0 e Mailpit saudáveis;
 2. Registrar R16 e R17 no ledger e ajustar o plano (Tasks 7 e 8) com os testes novos.
 3. Começar pela Task 5, com o cartão do implementador criado **antes** de despachar.
 
-**O que preciso de você para começar:** o "OK do planning" e a resposta às duas propostas (R16 e R17), que recomendo aprovar.
+**Aprovado pelo Allan em 2026-09-21:** planning, R16 e R17.
 
 ---
 
