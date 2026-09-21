@@ -1,6 +1,8 @@
-# Processo de trabalho no ClickUp (obrigatório para todos os agentes)
+# Processo de trabalho no ClickUp (espelho; regras de fluxo, evidência e orçamento)
 
-O Allan não enxerga o que os subagentes fazem no terminal. **O ClickUp é a visão oficial do andamento.**
+> **Atenção, agentes:** o andamento oficial agora é o **quadro Kanban local**. Leia **[`board-workflow.md`](board-workflow.md) primeiro**: ele define onde ficam os cards, o formato, os status e o passo a passo por papel, e **prevalece sobre este documento**. As regras de evidência, alertas de decisão/perigo, ciclo de handoff e o orçamento de chamadas abaixo continuam valendo. O ClickUp é só espelho, atualizado pelo orquestrador; **subagentes não o chamam**.
+
+O Allan não enxerga o que os subagentes fazem no terminal. ~~O ClickUp é a visão oficial do andamento.~~ **O quadro local é a visão oficial.**
 Regra de ouro: **o card muda ANTES da ação, nunca depois.** Se o card não diz, para o Allan não aconteceu.
 
 ## Onde

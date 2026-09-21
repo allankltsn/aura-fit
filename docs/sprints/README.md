@@ -13,7 +13,7 @@ Spec: [`../superpowers/specs/2026-09-19-rbac-auth-design.md`](../superpowers/spe
 
 ## Visibilidade (ClickUp)
 
-O andamento é acompanhado no **ClickUp** (kanban, um card por agente, alertas e decisões). Regras obrigatórias para todos os agentes em [`clickup-workflow.md`](clickup-workflow.md).
+O andamento é acompanhado no **quadro Kanban local** (extensão *Kanban Markdown* do VS Code, cards em `docs/sprints/board/` na raiz do projeto). Regras obrigatórias para todos os agentes em [`board-workflow.md`](board-workflow.md); o ClickUp é só espelho por marcos ([`clickup-workflow.md`](clickup-workflow.md)).
 
 ## Cerimônias
 
