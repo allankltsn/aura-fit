@@ -31,7 +31,10 @@ A **entrega técnica da Sprint 1 está pronta** (Tasks 0 a 4): a mesma suíte de
 
 Para conferir você mesmo, rode e espere `8 passed` nos dois:
 
+Rode **dentro do worktree** (`cd /e/allan/aura-fit/.claude/worktrees/rbac-auth`): o checkout `main` não tem o serviço `workspace`, e nesse caso o Docker responde `no such service: workspace`.
+
 ```bash
+cd /e/allan/aura-fit/.claude/worktrees/rbac-auth
 docker compose up -d --wait keycloak mailpit
 docker compose run --rm workspace pnpm --filter @aura/identity-service test keycloak
 docker compose run --rm workspace pnpm --filter @aura/identity-service test in-memory
@@ -57,7 +60,7 @@ Evidências: `docs/sprints/evidence/sprint-01/` (evidence, review, QA, verifica�
 | B | Reduzir o tempo de vida do token (ex.: 120 s) | Simples | Mais refreshes; a janela diminui mas não some |
 | C | Aceitar os 600 s e documentar | Nenhum custo | Risco fica aberto |
 
-**Recomendação: A** nas rotas de papéis e admin, mantendo 600 s nas demais. Se você não responder, eu sigo com A ao planejar as Tasks 5 a 8.
+**Decisão do Allan (2026-09-21): A** nas rotas de papéis e admin, mantendo 600 s nas demais. Vale para o planejamento das Tasks 5 a 8.
 
 ---
 
