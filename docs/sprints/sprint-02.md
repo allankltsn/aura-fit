@@ -23,7 +23,7 @@ Ao fim da sprint você vê isso rodando por um **script de demo reproduzível**.
 
 **Técnico**
 - Cada task: teste escrito antes e visto falhando; depois passando; tudo via `docker compose`; um commit por task com a mensagem do plano.
-- Cada task percorre o ciclo **desenvolvimento → QA → revisão (conformidade, depois qualidade) → verificação do orquestrador → seu aceite** (ver `clickup-workflow.md`, "Ciclo de handoff").
+- Cada task percorre o ciclo **desenvolvimento → QA → revisão (conformidade, depois qualidade) → verificação do orquestrador → seu aceite** (ver `docs/sprints/board-workflow.md`).
 - `docker compose up -d --wait identity-service` deixa o serviço saudável; a porta 3001 **não** é publicada no host.
 - O `identity-service` não importa Keycloak diretamente (só a porta). Nenhuma senha no nosso banco; nenhum segredo versionado.
 - Respostas de erro padronizadas, sem stack trace nem detalhe interno, com `correlationId`.
@@ -72,14 +72,11 @@ Rulings já decididos que esta sprint aplica: **R2** (`@aura/config` como devDep
 | Enumeração de contas (cadastro, login, reset, reenvio) | Respostas genéricas idênticas e testes que comparam corpo e status |
 | Força bruta no login | Throttle por e-mail+IP (429) na Task 7, mais o bloqueio do Keycloak; o QA mede o comportamento (achado D5 da Sprint 1) |
 | E-mail que falha em silêncio (achado D1 da Sprint 1) | Proposta de ruling **R17**: na Task 7, falha no envio é **registrada** (log + auditoria) sem mudar a resposta genérica; corrige o `res.ok` ignorado no provider |
-| Cota do ClickUp (100 chamadas/dia) | Ver "Visibilidade e orçamento" abaixo |
 | Limitações da demo (login não verificado é simulado marcando o e-mail no Keycloak) | O QA da Task 7 clica no link real de verificação do Mailpit e registra a evidência |
 
-## Visibilidade e orçamento do ClickUp
+## Visibilidade
 
-- Uma lista nova **"Sprint 2 — API de identidade"** no folder Aura Fit, com um milestone por Task e um card por agente (desenvolvimento, QA, revisão), no modelo Scrum já em uso.
-- **Estimativa:** cerca de 12 chamadas por Task, ou ~75 para a sprint, contra o teto operacional de 60 por dia. A sprint então passa por **mais de um dia**; o log local (`docs/sprints/logs/sprint-02/`) cobre o intervalo e o comentário agrupado sobe quando cada milestone fecha.
-- Só o orquestrador chama o ClickUp; decisões e alertas de ação perigosa vão direto, com você mencionado.
+Quadro Kanban local (extensão *Kanban Markdown* do VS Code), pasta `docs/sprints/board/sprint-02/` na raiz do projeto, com uma raia por Task (campo `epic`) e um card por agente, checkpoint, QA e revisão, conforme `docs/sprints/board-workflow.md`. Sem ferramenta externa e sem cota de API. Os eventos ficam em `docs/sprints/logs/sprint-02/`.
 
 ## Fora desta sprint
 
@@ -91,7 +88,7 @@ Sprint 1 aceita (Tasks 3 e 4 em `accepted`); Keycloak 26.0 e Mailpit saudáveis;
 
 ## Preparação para executar (após o seu OK)
 
-1. Criar a lista da Sprint 2 no ClickUp e os 6 milestones (7 chamadas).
+1. Criar a pasta `docs/sprints/board/sprint-02/` e os 6 cards de Task (milestones) no quadro, e apontar `kanban-markdown.featuresDirectory` para ela.
 2. Registrar R16 e R17 no ledger e ajustar o plano (Tasks 7 e 8) com os testes novos.
 3. Começar pela Task 5, com o cartão do implementador criado **antes** de despachar.
 

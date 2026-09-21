@@ -11,9 +11,9 @@ Spec: [`../superpowers/specs/2026-09-19-rbac-auth-design.md`](../superpowers/spe
 | Claude (orquestrador) | Facilita a cadência, faz o planning, os dailies e monta a review |
 | Subagentes | Um por task do plano (contexto limpo), com revisão em duas etapas: conformidade com o plano/spec e qualidade de código |
 
-## Visibilidade (ClickUp)
+## Visibilidade (quadro Kanban local)
 
-O andamento é acompanhado no **quadro Kanban local** (extensão *Kanban Markdown* do VS Code, cards em `docs/sprints/board/` na raiz do projeto). Regras obrigatórias para todos os agentes em [`board-workflow.md`](board-workflow.md); o ClickUp é só espelho por marcos ([`clickup-workflow.md`](clickup-workflow.md)).
+O andamento é acompanhado no **quadro Kanban do VS Code** (extensão *Kanban Markdown*; cards em `docs/sprints/board/` na raiz do projeto). Regras obrigatórias para todos os agentes em [`board-workflow.md`](board-workflow.md).
 
 ## Cerimônias
 

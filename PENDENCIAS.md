@@ -10,8 +10,8 @@ A **entrega técnica da Sprint 1 está pronta** (Tasks 0 a 4): a mesma suíte de
 |---|---|---|---|---|
 | 1 | ~~Aceite das Tasks 3 e 4~~ **feito em 2026-09-21** (`accepted`) | Você | — | — |
 | 2 | Decisão D3: logout e JWT já emitido | Você | Média | Não, mas define o BFF |
-| 3 | ~~Órfãs no quadro (4 cards)~~ **fechadas como [ABANDONADO]** em 2026-09-21; apagar segue possível | Você | — | — |
-| 4 | Ajustes do ClickUp (campo "Agente", títulos) | Você / orquestrador | Baixa | Não |
+| 3 | ~~Órfãs no quadro (4 cards)~~ **fechadas como [ABANDONADO]** em 2026-09-21 (card `orfas-a2daa612`, coluna Closed) | Você | — | — |
+| 4 | ~~Ajustes do ClickUp~~ **descartado**: o ClickUp deixou de ser usado (2026-09-21) | — | — | — |
 | 5 | Itens menores adiados (Tasks 0, 1, 3, 4) | Revisão final | Baixa | Não |
 | 6 | O que não foi verificado | QA futuro | Média | Não |
 | 7 | Adendo de verificação em arquivo | Orquestrador | Baixa | Não |
@@ -22,7 +22,7 @@ A **entrega técnica da Sprint 1 está pronta** (Tasks 0 a 4): a mesma suíte de
 
 > Milestones das Tasks 3 e 4 movidos para `accepted`. O fechamento (`Closed`) fica para o fim da Sprint Review.
 
-**O que é.** As duas Tasks estão em `completed` no ClickUp, que significa "pronto e verificado, aguardando o aceite do Allan". Só você move para `accepted` (e depois `Closed`).
+**O que é.** As duas Tasks passaram por `completed` ("pronto e verificado, aguardando o aceite do Allan") e você as aceitou em 2026-09-21.
 
 **O que você está aceitando (com prova):**
 
@@ -66,31 +66,15 @@ Evidências: `docs/sprints/evidence/sprint-01/` (evidence, review, QA, verifica�
 
 ---
 
-## 3. Cards órfãos no ClickUp (4 cards) — ✅ FECHADOS em 2026-09-21 (opção A)
+## 3. Cards órfãos — ✅ RESOLVIDO em 2026-09-21
 
-> Como não houve escolha entre A e B, apliquei a reversível: os 4 estão `Closed` com o prefixo `[ABANDONADO]`. Se ainda preferir apagar, é só pedir (4 chamadas).
-
-**O que é.** Restos do primeiro implementador da Task 3 (`a2daa612`), que parou antes de executar: `86e3bcqfj` (marcado "em progresso" por engano), `86e3bcqgw`, `86e3bcqjp` e `86e3bcqm0` (Open). Nenhum representa trabalho pendente; quem entregou foi outro agente.
-
-**Opções**
-
-| | Ação | Prós | Contras |
-|---|---|---|---|
-| A | Fechar com a nota "abandonado" | Mantém o rastro no quadro | Ocupam espaço |
-| B | Apagar | Quadro limpo; o histórico já está no log, no post mortem e na auditoria | Irreversível no ClickUp |
-
-**Recomendação:** B, já que você os considera lixo. Custo: 4 chamadas ao ClickUp.
+As 4 subtarefas abandonadas do primeiro implementador da Task 3 viraram um único card no quadro local (`orfas-a2daa612`, coluna Closed, etiqueta `abandonado`).
 
 ---
 
-## 4. Ajustes de processo no ClickUp
+## 4. Ajustes de processo — descartado
 
-| Item | Situação | Recomendação |
-|---|---|---|
-| Campo personalizado **Agente** | Não existe. A API não cria campos; é uma ação sua na UI (folder Aura Fit, tipo Dropdown ou Texto) | Criar quando puder; hoje o agente aparece no título `[papel · idcurto]` |
-| Títulos `[impl3]` e `[impl4]` | Fora do padrão `[papel · idcurto]` (7 cards) | Corrigir só se incomodar: cada retitulação custa 1 chamada |
-| Cota do ClickUp | 100 chamadas/dia do plano; hoje foram usadas 24 | Manter o orçamento (`docs/sprints/logs/clickup-budget.md`) |
-| QA para Tasks 0 a 3 | Nunca houve QA formal; o QA da Task 4 foi o primeiro | Aceitável: as Tasks 0 a 3 têm testes e revisão. O ciclo novo já exige QA daqui em diante |
+O ClickUp deixou de ser usado em 2026-09-21 (cota diária de 100 chamadas do plano e queda do conector). Campo "Agente", títulos `[impl3]`/`[impl4]` e orçamento de chamadas perderam o objeto. O procedimento vigente está em `docs/sprints/board-workflow.md`.
 
 ---
 
@@ -143,7 +127,7 @@ Todos estão no ledger (`.superpowers/sdd/2026-09-19-rbac-auth/progress.md`).
 
 **O que é.** O arquivo `verification-tasks-3-4.md` foi escrito no commit `738c73a`, antes da correção de timeout (`32a2bfb`) e do realm (`7390c4f`). Eu reexecutei os testes depois (8/8 nas duas suítes, `tsc` com saída 0), mas isso ficou no log, sem um arquivo próprio. A auditoria apontou isso como lacuna de rastreabilidade.
 
-**Recomendação.** Adicionar um adendo com o commit atual. Custo: zero chamadas ao ClickUp.
+**Recomendação.** Adicionar um adendo com o commit atual. 
 
 ---
 

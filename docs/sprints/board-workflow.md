@@ -1,6 +1,6 @@
-# Quadro Kanban local — como todo agente trabalha (leia este primeiro)
+# Quadro Kanban local — o procedimento de todo agente (obrigatório)
 
-**Este documento é a fonte oficial do andamento e vale mais que o `clickup-workflow.md` onde os dois divergirem.** O ClickUp é só um espelho, atualizado pelo orquestrador em marcos (ver orçamento no `clickup-workflow.md`). O Allan acompanha o trabalho pelo quadro do VS Code (extensão *Kanban Markdown*). **Se o card não diz, para o Allan não aconteceu.**
+**Este documento é a fonte oficial do andamento e das regras de trabalho.** O Allan acompanha tudo pelo quadro do VS Code (extensão *Kanban Markdown*); não há ferramenta externa de gestão. **Se o card não diz, para o Allan não aconteceu.**
 
 ## 1. Onde está e o que você pode tocar
 
@@ -92,14 +92,98 @@ Toda Task percorre a mesma esteira: **desenvolvimento → QA → revisão (confo
 ## 5. Registros obrigatórios
 
 - **Post mortem:** todo erro, problema ou decisão + a solução que funcionou vai para a seção `Decisões, problemas e soluções` do **card da Task** (pai). É a base de conhecimento futura.
-- **Log de eventos:** o orquestrador consolida em `docs/sprints/logs/sprint-XX/` (agente, data e hora, tipo, mensagem). Ao fechar a Task, o resumo agrupado vai como **um** comentário no ClickUp.
-- **Decisão do Allan:** card do agente em `blocked` com prefixo `❓ DECISÃO:` e um bloco `Contexto / Opções / Recomendação / O que acontece se não responder`; **pare** e retorne `NEEDS_DECISION` ao orquestrador, que avisa o Allan.
+- **Log de eventos:** o orquestrador consolida em `docs/sprints/logs/sprint-XX/<task>.log.md` uma linha por evento (data e hora, agente, card, tipo, mensagem, evidência). Tipos: `INICIO`, `MARCO`, `RED`, `GREEN`, `ESCOLHA`, `DESVIO`, `RISCO`, `PROBLEMA`, `SOLUCAO`, `DECISAO`, `ALERTA_PERIGO`, `FIM`. Ao fechar a Task, o resumo do log entra na seção de post mortem do card da Task.
+- **Decisão do Allan:** (ver seção 8) card do agente em `blocked` com prefixo `❓ DECISÃO:` e um bloco `Contexto / Opções / Recomendação / O que acontece se não responder`; **pare** e retorne `NEEDS_DECISION` ao orquestrador, que avisa o Allan.
 - **Tempo:** minutos por card, no corpo.
 
 ## 6. Não faça
 
 - Não crie campos extras no cabeçalho, nem subpastas de status dentro do quadro.
 - Não edite `.vscode/settings.json` nem arquivos fora do worktree e da pasta do quadro.
-- Não chame o ClickUp (só o orquestrador, com orçamento de chamadas).
 - Não use `Glob`/`Grep` na raiz do worktree nem em `node_modules`, nem `Get-ChildItem -Recurse` (travou o VSCode). Use caminhos explícitos.
 - Não marque nada como pronto sem evidência gerada por execução real.
+
+## 7. Evidência de pronto (obrigatória antes de qualquer card sair de `in-progress`/`in-review`)
+
+Nenhum agente avança um card sem antes **gravar um arquivo de evidência** com dados **válidos e verdadeiros**.
+
+1. **Gerada, nunca escrita de memória:** vem da execução real (saída bruta, relatório de ferramenta). Não parafrasear, não resumir números, não "limpar" falhas.
+2. **Reproduzível:** traz o **comando exato**, o **diretório**, o **commit** (`git rev-parse HEAD`), a **data/hora** e o **código de saída**.
+3. **Completa, inclusive o negativo:** falhas, avisos e itens **não verificados** aparecem (`NÃO VERIFICADO: <o quê e por quê>`). Omitir é falsificar.
+4. **Rastreável ao critério de pronto:** cada critério do card aparece com `✅ atendido (prova: …)`, `⚠️ parcial` ou `❌ não atendido`. Só vai a `completed` com todos `✅` (ou ressalvas aprovadas pelo Allan).
+5. **Sem segredos:** nunca tokens, senhas, `.env` ou `secrets/`; mascare antes de salvar.
+6. Se a evidência **não pôde ser produzida**, o card **não** avança: vai a `blocked` com o motivo.
+
+| Papel | Arquivo (em `docs/sprints/evidence/sprint-XX/<card>/`) | Conteúdo mínimo |
+|---|---|---|
+| Implementador (código) | `evidence-<card>.md` + `test-output.txt` | comandos, saída bruta dos testes (passou/falhou), `git log -1` e `git diff --stat`, checklist dos critérios |
+| Implementador (infra) | `evidence-<card>.md` + `compose-ps.txt` | `docker compose ps` (saúde), script de verificação, logs relevantes |
+| Implementador (banco) | `evidence-<card>.md` + `migration-check.txt` | migração aplicada, tabelas/colunas conferidas, seed rodado duas vezes |
+| Revisor | `review-<card>.md` | commits revisados, achados com severidade e arquivo:linha, veredito |
+| QA | `qa-report-<card>.md` + `qa-output.txt` | casos executados e resultado, defeitos abertos, o que ficou fora |
+| Segurança | `security-<card>.md` | checagens, achados com severidade, o que não foi coberto |
+| Corretor | `fix-<card>.md` + saída do teste | teste que **falhava** (antes) e **passa** (depois) |
+| Investigador | `findings-<card>.md` | evidências (arquivo:linha, log), causa raiz, grau de confiança |
+| Orquestrador | `verification-<card>.md` | conferência independente: **reexecutou ao menos um comando** e conferiu o commit |
+
+Cabeçalho de todo `evidence-*.md`:
+
+```
+# Evidência — <card> — <checkpoint ou card inteiro>
+Agente: <papel · idcurto>   Data/hora: <ISO 8601>   Commit: <sha>
+Comando(s): <exatos>   Diretório: <cwd>   Código de saída: <n>
+
+## Critérios de pronto
+- [x] <critério 1> — prova: <trecho/linha do output>
+- [ ] <critério 2> — NÃO VERIFICADO: <por quê>
+
+## Saída bruta
+<colar ou apontar para test-output.txt>
+
+## Ressalvas e riscos conhecidos
+<o que não cobre, dívida técnica, achados minor>
+```
+
+**Verificação:** o orquestrador não confia às cegas. Divergência entre a evidência e a reexecução devolve o card a `in-progress`, com a diferença registrada no card.
+
+## 8. Decisões do Allan e ações perigosas
+
+**Decisão que só o Allan pode tomar:**
+1. **Pare de trabalhar.** Ponha o seu card em `blocked`, com o título prefixado `❓ DECISÃO:`, e escreva no corpo:
+   ```
+   ❓ DECISÃO NECESSÁRIA
+   Contexto: <2 linhas>
+   Opções:
+     A) <opção> — prós/contras
+     B) <opção> — prós/contras
+   Recomendação: <A ou B e por quê>
+   O que acontece se não responder: <o trabalho fica parado em X>
+   ```
+   Anote também o status anterior, para saber para onde voltar.
+2. Retorne ao orquestrador com `NEEDS_DECISION` e o caminho do card. O **orquestrador avisa o Allan no chat** e expõe os impedimentos do time; siga com o que não depende da decisão.
+3. Ao receber a resposta, o orquestrador registra `Decisão aplicada: <resumo>` no card, remove o prefixo e devolve o card a `in-progress`.
+
+**Ação considerada perigosa** por qualquer agente (prejudicial ao sistema, ao projeto, à empresa, ao Allan ou a este computador, ou antiética): **não se executa**, mesmo que o grupo depois decida liberar. Em **qualquer** caso, registre no card `🚨 CRITICIDADE ALTA` ou `CRÍTICA` (ação, risco, decisão do grupo, quem avaliou) e acrescente uma linha `ALERTA_PERIGO` ao log; o orquestrador avisa o Allan **na hora, no chat**.
+
+## 9. Falhas e travamentos
+
+- Agente sem atividade por mais de ~10 min: o orquestrador anota `⚠️ Sem atividade desde HH:MM` no card, investiga o transcrito (`~/.claude/projects/<projeto>/<sessão>/subagents/*.jsonl` + `.meta.json`) e registra a causa.
+- Pedido de permissão pendente: `blocked` e alerta ao Allan como decisão.
+- O agente **não** amplia permissões nem edita fora do escopo do card. Precisa de algo fora dele? Vira decisão.
+- Antes de iniciar o RED, confirme que o Docker responde (`docker info`); um daemon parado gera um RED inválido.
+
+## 10. Escopo de arquivos
+
+- Cada card de agente lista os **únicos caminhos** que ele pode alterar. Fora disso: proibido.
+- `.claude/settings.local.json` do worktree aplica isso como permissões (allow/deny). Não edite esse arquivo.
+- Tarefas em paralelo só rodam se os escopos forem **disjuntos**; caso contrário, em sequência.
+- Migrações, `pnpm-lock.yaml`, `docker-compose.yml` e o `package.json` da raiz têm **um dono por vez** (o card que os edita diz isso).
+
+## 11. Checklist de cada agente
+
+- [ ] Meu card existe, com papel, escopo e critérios?
+- [ ] Ele está `in-progress` **antes** de eu começar?
+- [ ] Meus checkpoints estão como cards, com checklist marcado ao concluir?
+- [ ] Gravei a evidência (execução real, comando, commit, ressalvas) **antes** de devolver?
+- [ ] Preenchi `Tempo`, `Evidência` e `Decisões, problemas e soluções`?
+- [ ] Se preciso de decisão ou vi algo perigoso, registrei e avisei o orquestrador?
