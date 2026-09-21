@@ -38,13 +38,22 @@ Ao fim da sprint você vê isso rodando por um **script de demo reproduzível**.
 
 **Problema.** No plano original, `logout` só revoga a sessão no Keycloak, e `resolve` continua devolvendo `ok` enquanto existir a chave de perfil da sessão no KV. O BFF (Sprint 3) checaria a sessão nas rotas sensíveis, mas hoje não há o que checar.
 
-**Proposta (ruling R16, precisa do seu OK):**
+**Proposta (ruling R16, resumo na tabela "Rulings propostos" abaixo):**
 1. **Task 7:** `SessionsService.logout` decodifica o `sid` do refresh token apresentado, grava `session:{sid}:revoked` no KV com TTL de 600 s (a vida do access token) e apaga `session:{sid}:membership`.
 2. **Task 8:** `AuthorizationService.resolve` devolve `denied` se `session:{sid}:revoked` existir.
 3. Um teste novo em cada task: "após o logout, `resolve` da mesma sessão devolve `denied`".
 4. Sprint 3 (BFF): rotas de papéis e admin chamam `resolve` **sem cache**; as demais mantêm o cache normal e o token de 600 s.
 
 Custo: pequeno (duas chaves de KV e dois testes). Risco: nenhum para o que já foi aceito, pois não altera a porta nem o `KeycloakProvider`. O `sid` vem de um token que o próprio cliente apresenta e a chave é só de negação, então forjar um `sid` não dá acesso a nada.
+
+## Rulings propostos (precisam do seu OK)
+
+| # | O que muda | Onde | Por quê | Custo | Se você recusar |
+|---|---|---|---|---|---|
+| **R16** | No logout, gravar `session:{sid}:revoked` no KV (validade de 600 s) e apagar `session:{sid}:membership`; `resolve` devolve `denied` se a marca existir. **1 teste novo em cada Task** ("após o logout, `resolve` da mesma sessão devolve `denied`") | Task 7 (logout) e Task 8 (resolve) | Aplica a sua decisão **D3 = A**: sem isso, a autorização continuaria `ok` depois do logout e o BFF não teria o que checar | 2 chaves de KV e 2 testes; não toca a porta nem o `KeycloakProvider` | O D3 fica sem efeito real; a alternativa é o BFF consultar o Keycloak (introspect) a cada rota sensível, mais lento |
+| **R17** | Na Task 7, falha no envio de e-mail (verificação, reset, reenvio) é **registrada** em log e auditoria, **sem** mudar a resposta genérica ao usuário; corrige o `res.ok` ignorado no `KeycloakProvider` | Task 7 (`SessionsService`) e ajuste pequeno no provider | Achado **D1** do QA da Sprint 1: se o SMTP cair, ninguém é avisado | 1 teste e poucas linhas | Falha de e-mail continua silenciosa (dívida Minor no ledger) |
+
+**Recomendação:** aprovar os dois. Depois do seu OK, eu os registro no ledger como `R16` e `R17` e ajusto o plano das Tasks 7 e 8 com os testes novos.
 
 ## Ordem de execução e dependências
 
