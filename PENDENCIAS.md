@@ -8,9 +8,9 @@ A **entrega técnica da Sprint 1 está pronta** (Tasks 0 a 4): a mesma suíte de
 
 | # | Pendência | Quem resolve | Urgência | Bloqueia a Sprint 2? |
 |---|---|---|---|---|
-| 1 | Aceite das Tasks 3 e 4 | Você | Alta | Sim (Sprint Review) |
+| 1 | ~~Aceite das Tasks 3 e 4~~ **feito em 2026-09-21** (`accepted`) | Você | — | — |
 | 2 | Decisão D3: logout e JWT já emitido | Você | Média | Não, mas define o BFF |
-| 3 | Órfãs no quadro (4 cards) | Você | Baixa | Não |
+| 3 | ~~Órfãs no quadro (4 cards)~~ **fechadas como [ABANDONADO]** em 2026-09-21; apagar segue possível | Você | — | — |
 | 4 | Ajustes do ClickUp (campo "Agente", títulos) | Você / orquestrador | Baixa | Não |
 | 5 | Itens menores adiados (Tasks 0, 1, 3, 4) | Revisão final | Baixa | Não |
 | 6 | O que não foi verificado | QA futuro | Média | Não |
@@ -18,7 +18,9 @@ A **entrega técnica da Sprint 1 está pronta** (Tasks 0 a 4): a mesma suíte de
 
 ---
 
-## 1. Aceite das Tasks 3 e 4 (Sprint Review)
+## 1. Aceite das Tasks 3 e 4 (Sprint Review) — ✅ FEITO em 2026-09-21
+
+> Milestones das Tasks 3 e 4 movidos para `accepted`. O fechamento (`Closed`) fica para o fim da Sprint Review.
 
 **O que é.** As duas Tasks estão em `completed` no ClickUp, que significa "pronto e verificado, aguardando o aceite do Allan". Só você move para `accepted` (e depois `Closed`).
 
@@ -64,7 +66,9 @@ Evidências: `docs/sprints/evidence/sprint-01/` (evidence, review, QA, verifica�
 
 ---
 
-## 3. Cards órfãos no ClickUp (4 cards)
+## 3. Cards órfãos no ClickUp (4 cards) — ✅ FECHADOS em 2026-09-21 (opção A)
+
+> Como não houve escolha entre A e B, apliquei a reversível: os 4 estão `Closed` com o prefixo `[ABANDONADO]`. Se ainda preferir apagar, é só pedir (4 chamadas).
 
 **O que é.** Restos do primeiro implementador da Task 3 (`a2daa612`), que parou antes de executar: `86e3bcqfj` (marcado "em progresso" por engano), `86e3bcqgw`, `86e3bcqjp` e `86e3bcqm0` (Open). Nenhum representa trabalho pendente; quem entregou foi outro agente.
 
