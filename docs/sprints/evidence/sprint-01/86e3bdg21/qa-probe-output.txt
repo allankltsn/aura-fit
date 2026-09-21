@@ -1,0 +1,70 @@
+/repo
+== ITEM 1: sendVerificationEmail
+mailbox before for qa-1790007185308-verify@example.com 0
+emails to qa-1790007185308-verify@example.com : 1
+  To: [ 'qa-1790007185308-verify@example.com' ] Subject: Update Your Account
+  links (masked): [
+  'http://keycloak:8080/realms/aura/login-actions/action-token?[MASKED]'
+]
+  link has action-token and realm path: true
+
+== ITEM 2: sendPasswordReset
+reset existing -> OK undefined
+emails to existing now: 2 subjects: [ 'Update Your Account', 'Update Your Account' ]
+reset nonexistent -> OK undefined
+emails to nonexistent: 0 | total mailbox delta after ghost call: 0
+reset weird email a+b@x.com%& -> OK undefined
+timing ms existing vs nonexistent: 86 26
+
+== ITEM 3: brute force
+login ok (sanity) -> OK [
+  'accessToken',
+  'refreshToken',
+  'expiresIn',
+  'sessionId',
+  'subject',
+  'email',
+  'emailVerified'
+]
+raw wrong pw (before): 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+wrong #2 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #3 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #4 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #5 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #6 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #7 -> THROWS InvalidCredentialsError: invalid_credentials
+raw wrong pw (after lock): 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+CORRECT pw after 7 failures -> THROWS InvalidCredentialsError: invalid_credentials
+raw CORRECT pw after lock: 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+nonexistent user, wrong pw -> THROWS InvalidCredentialsError: invalid_credentials
+raw nonexistent: 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+
+== ITEM 4: revokeSession
+userinfo before revoke: 200 expiresIn 600
+userinfo after revoke (old access token): 401
+refresh after revoke -> THROWS InvalidRefreshTokenError: invalid_refresh_token
+introspect old access token active? false
+revokeSession with garbage token -> OK undefined
+
+== ITEM 5: email_verified=false branch
+raw unverified+correct pw: 400 {"error":"invalid_grant","error_description":"Account is not fully set up"}
+authenticate unverified -> THROWS EmailNotVerifiedError: email_not_verified
+admin flip emailVerified=false status 204
+refresh after flip (provider does not check emailVerified) -> OK [
+  'accessToken',
+  'refreshToken',
+  'expiresIn',
+  'sessionId',
+  'subject',
+  'email',
+  'emailVerified'
+]
+refresh tokenset emailVerified = false
+authenticate after flip -> THROWS EmailNotVerifiedError: email_not_verified
+
+CLEANUP: deleted 5 users; GET status after delete = 404,404,404,404,404 (404 expected)
+npm notice
+npm notice New major version of npm available! 10.9.8 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice

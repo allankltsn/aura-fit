@@ -184,6 +184,27 @@ Comando(s): <exatos>   Diretório: <cwd>   Código de saída: <n>
 
 **Verificação (o orquestrador não confia às cegas):** antes de mover o card, o orquestrador **reexecuta ao menos um comando** citado na evidência (por exemplo a suíte de testes) e confere o commit. Divergência = o card volta para `em progresso`, com comentário citando a diferença. O resultado fica em `verification-<card>.md`.
 
+## Ciclo de handoff entre agentes (padrão de todas as Tasks)
+
+Cada Task percorre **sempre** a mesma esteira. Quem tem a Task em cada etapa é o **responsável** (registrado no título `[papel · idcurto]` e na linha `Próximo responsável:` da descrição do card; o assignee do ClickUp é sempre o Allan).
+
+| Etapa | Status Scrum | Responsável | Entrega (evidência) | Só avança quando |
+|---|---|---|---|---|
+| 1. Desenvolvimento (TDD) | `in progress` | implementador | commit + `evidence-<card>.md` | RED real visto, testes verdes, commit com trailer |
+| 2. Teste / QA | `in review` (🧪) | QA (tester) | `qa-report-<card>.md` + saída bruta | casos executados; itens "NÃO VERIFICADO" fechados ou aceitos por escrito |
+| 3. Revisão | `in review` (🔍) | revisor (conformidade, depois qualidade) | `review-<card>.md` | 0 Critical e 0 Important abertos |
+| 3b. Correção (se houver achado) | `rejected` | corretor | `fix-<card>.md` (teste que falhava → passa) | volta à etapa 2 ou 3 |
+| 4. Validação | `completed` | orquestrador | `verification-<card>.md` (reexecutou ao menos 1 comando) | evidência confere com o commit |
+| 5. Aceite | `accepted` → `Closed` | Allan | comentário/aceite | Sprint Review |
+
+**Regras de auditoria do quadro (o orquestrador, com um auditor, faz a cada fim de Task e antes de cada Sprint Review):**
+1. O status do card tem de refletir o **real andamento** provado por commit/evidência; se não reflete, mover para o status correto **e** registrar no log local.
+2. Se o trabalho **não** está pronto, o card não avança: passa ao **responsável da próxima etapa** (ou volta ao anterior, se houver defeito), com `Próximo responsável:` na descrição.
+3. **Todo agente que atua tem card**, inclusive revisor e QA (criado antes de despachar; retroativo só com aviso na descrição).
+4. Órfãs (cards de agente que morreu sem executar) são fechadas com nota `abandonado` ou apagadas por decisão do Allan; o agente substituto é citado na descrição do card pai.
+5. Um subagente **nunca** move o próprio card para além de `completed`; quem valida e avança é o orquestrador.
+6. Transições em lote respeitam o orçamento de chamadas (seção abaixo).
+
 ## Orçamento de chamadas ao ClickUp (gerido pelo orquestrador)
 
 **Fato medido (2026-09-20):** o conector MCP do ClickUp tem **cota diária de 100 chamadas** (`RATE_LIMIT_EXCEEDED`, `limit: 100`, `retryAfter` ≈ 21 h). Não é bloqueio por suspeita de ataque: é o limite do plano, e estourá-lo deixa o ClickUp indisponível pelo resto do dia. Além disso, evitamos rajadas para não parecermos tráfego abusivo.

@@ -1,0 +1,130 @@
+### qa-probe.ts (docker compose run --rm workspace sh -c 'cd apps/identity-service && npx tsx ../../docs/sprints/evidence/sprint-01/86e3bdg21/qa-probe.ts') exit=0
+/repo
+== ITEM 1: sendVerificationEmail
+mailbox before for qa-1790007185308-verify@example.com 0
+emails to qa-1790007185308-verify@example.com : 1
+  To: [ 'qa-1790007185308-verify@example.com' ] Subject: Update Your Account
+  links (masked): [
+  'http://keycloak:8080/realms/aura/login-actions/action-token?[MASKED]'
+]
+  link has action-token and realm path: true
+
+== ITEM 2: sendPasswordReset
+reset existing -> OK undefined
+emails to existing now: 2 subjects: [ 'Update Your Account', 'Update Your Account' ]
+reset nonexistent -> OK undefined
+emails to nonexistent: 0 | total mailbox delta after ghost call: 0
+reset weird email a+b@x.com%& -> OK undefined
+timing ms existing vs nonexistent: 86 26
+
+== ITEM 3: brute force
+login ok (sanity) -> OK [
+  'accessToken',
+  'refreshToken',
+  'expiresIn',
+  'sessionId',
+  'subject',
+  'email',
+  'emailVerified'
+]
+raw wrong pw (before): 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+wrong #2 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #3 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #4 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #5 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #6 -> THROWS InvalidCredentialsError: invalid_credentials
+wrong #7 -> THROWS InvalidCredentialsError: invalid_credentials
+raw wrong pw (after lock): 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+CORRECT pw after 7 failures -> THROWS InvalidCredentialsError: invalid_credentials
+raw CORRECT pw after lock: 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+nonexistent user, wrong pw -> THROWS InvalidCredentialsError: invalid_credentials
+raw nonexistent: 401 {"error":"invalid_grant","error_description":"Invalid user credentials"}
+
+== ITEM 4: revokeSession
+userinfo before revoke: 200 expiresIn 600
+userinfo after revoke (old access token): 401
+refresh after revoke -> THROWS InvalidRefreshTokenError: invalid_refresh_token
+introspect old access token active? false
+revokeSession with garbage token -> OK undefined
+
+== ITEM 5: email_verified=false branch
+raw unverified+correct pw: 400 {"error":"invalid_grant","error_description":"Account is not fully set up"}
+authenticate unverified -> THROWS EmailNotVerifiedError: email_not_verified
+admin flip emailVerified=false status 204
+refresh after flip (provider does not check emailVerified) -> OK [
+  'accessToken',
+  'refreshToken',
+  'expiresIn',
+  'sessionId',
+  'subject',
+  'email',
+  'emailVerified'
+]
+refresh tokenset emailVerified = false
+authenticate after flip -> THROWS EmailNotVerifiedError: email_not_verified
+
+CLEANUP: deleted 5 users; GET status after delete = 404,404,404,404,404 (404 expected)
+
+### contract suites
+### pnpm --filter @aura/identity-service test keycloak
+
+ RUN  v2.1.9 /repo/apps/identity-service
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "aura_identity", schema "test" at "postgres:5432"
+
+Applying migration `20260920005947_init`
+
+Database reset successful
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260920005947_init/
+    └─ migration.sql
+
+ ✓ src/identity-provider/keycloak.provider.test.ts (8 tests) 3570ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > creates a user and authenticates with the right password 706ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rejects an unverified account with valid credentials as email_not_verified 521ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rejects wrong password and unknown email with the same error 505ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rejects duplicate e-mail 301ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rotates refresh tokens and revokes the family on reuse 571ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > revokeSession invalidates the refresh token 468ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > deleteUser removes the account 446ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  16:13:48
+   Duration  20.01s (transform 1.41s, setup 8.00s, collect 1.65s, tests 3.57s, environment 0ms, prepare 4.38s)
+
+exit=0
+### pnpm --filter @aura/identity-service test in-memory
+
+> @aura/identity-service@0.0.0 test /repo/apps/identity-service
+> vitest run "in-memory"
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /repo/apps/identity-service
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "aura_identity", schema "test" at "postgres:5432"
+
+Applying migration `20260920005947_init`
+
+Database reset successful
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260920005947_init/
+    └─ migration.sql
+
+ ✓ src/identity-provider/in-memory.provider.test.ts (8 tests) 30ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  16:14:43
+   Duration  19.30s (transform 1.36s, setup 7.56s, collect 875ms, tests 30ms, environment 1ms, prepare 6.04s)
+
+exit=0

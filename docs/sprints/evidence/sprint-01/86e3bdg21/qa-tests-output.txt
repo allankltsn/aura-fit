@@ -1,0 +1,62 @@
+### pnpm --filter @aura/identity-service test keycloak
+
+ RUN  v2.1.9 /repo/apps/identity-service
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "aura_identity", schema "test" at "postgres:5432"
+
+Applying migration `20260920005947_init`
+
+Database reset successful
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260920005947_init/
+    └─ migration.sql
+
+ ✓ src/identity-provider/keycloak.provider.test.ts (8 tests) 3570ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > creates a user and authenticates with the right password 706ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rejects an unverified account with valid credentials as email_not_verified 521ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rejects wrong password and unknown email with the same error 505ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rejects duplicate e-mail 301ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > rotates refresh tokens and revokes the family on reuse 571ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > revokeSession invalidates the refresh token 468ms
+   ✓ Keycloak integration > IdentityProviderPort contract: Keycloak > deleteUser removes the account 446ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  16:13:48
+   Duration  20.01s (transform 1.41s, setup 8.00s, collect 1.65s, tests 3.57s, environment 0ms, prepare 4.38s)
+
+exit=0
+### pnpm --filter @aura/identity-service test in-memory
+
+> @aura/identity-service@0.0.0 test /repo/apps/identity-service
+> vitest run "in-memory"
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /repo/apps/identity-service
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "aura_identity", schema "test" at "postgres:5432"
+
+Applying migration `20260920005947_init`
+
+Database reset successful
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260920005947_init/
+    └─ migration.sql
+
+ ✓ src/identity-provider/in-memory.provider.test.ts (8 tests) 30ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  16:14:43
+   Duration  19.30s (transform 1.36s, setup 7.56s, collect 875ms, tests 30ms, environment 1ms, prepare 6.04s)
+
+exit=0
